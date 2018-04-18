@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WanqiAnHW9</string>
+    <string name="tab_text_1">SEARCH</string>
+    <string name="tab_text_2">FAVORITES</string>
+    <string name="radio_here">Current location</string>
+    <string name="radio_other">Other. Specify Location</string>
+
+    <string name="tab_text_3">INFO</string>
+    <string name="tab_text_4">PHOTOS</string>
+    <string name="tab_text_5">MAP</string>
+    <string name="tab_text_6">REVIEWS</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="category_array">
+        <item>Default</item>
+        <item>Airport</item>
+        <item>Amusement Park</item>
+        <item>Aquarium</item>
+        <item>Art Gallery</item>
+        <item>Bar</item>
+        <item>Beauty Salon</item>
+        <item>Bowling Alley</item>
+        <item>Bus Station</item>
+        <item>Cafe</item>
+        <item>Campground</item>
+        <item>Car Rental</item>
+        <item>Casino</item>
+        <item>Lodging</item>
+        <item>Movie Theater</item>
+        <item>Museum</item>
+        <item>Night Club</item>
+        <item>Park</item>
+        <item>Parking</item>
+        <item>Restaurant</item>
+        <item>Shopping Mall</item>
+        <item>Stadium</item>
+        <item>Subway Station</item>
+        <item>Taxi Stand</item>
+        <item>Train Station</item>
+        <item>Transit Station</item>
+        <item>Travel Agency</item>
+        <item>Zoo</item>
+    </string-array>
+</resources>
