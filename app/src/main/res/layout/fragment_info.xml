@@ -10,7 +10,7 @@
         android:padding="10dp">
 
         <TextView
-            android:id="@+id/resultsErrorMessage"
+            android:id="@+id/infoErrorMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -25,6 +25,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="10dp"
+            android:id="@+id/info_title_address"
+            android:visibility="gone"
             >
             <TextView
                 android:layout_width="0px"
@@ -34,7 +36,8 @@
                 android:text="Address"
                 android:textColor="#757575"
                 android:textStyle="bold"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                />
 
             <TextView
                 android:id="@+id/info_address"
@@ -50,6 +53,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="10dp"
+            android:id="@+id/info_title_phone"
+            android:visibility="gone"
             >
             <TextView
                 android:layout_width="0px"
@@ -75,6 +80,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="10dp"
+            android:id="@+id/info_title_price"
+            android:visibility="gone"
             >
             <TextView
                 android:layout_width="0px"
@@ -100,9 +107,11 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="10dp"
+            android:id="@+id/info_title_rating"
+            android:visibility="gone"
             >
             <TextView
-                android:layout_width="0px"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_gravity="left"
@@ -111,13 +120,38 @@
                 android:textStyle="bold"
                 android:textSize="15sp" />
 
-            <TextView
-                android:id="@+id/info_rating"
-                android:layout_width="0px"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:textColor="#757575"
-                android:textSize="15sp" />
+            <!--<RatingBar-->
+                <!--android:id="@+id/MyRating"-->
+                <!--style="?android:attr/ratingBarStyleSmall"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_marginRight="300px"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:isIndicator="true"-->
+                <!--android:numStars="5"-->
+                <!--android:stepSize="0.1" />-->
+            <RatingBar
+                android:id="@+id/info_ratingBar"
+                style="@android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:scaleX=".5"
+                android:scaleY=".5"
+                android:transformPivotX="0dp"
+                android:transformPivotY="0dp"
+                android:isIndicator="true"
+                android:max="5" />
+            <!--<RatingBar-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginRight="170px"-->
+                <!--android:id="@+id/info_ratingBar"-->
+                <!--style="?android:attr/ratingBarStyleIndicator"-->
+                <!--android:scaleX=".5"-->
+                <!--android:scaleY=".5"-->
+                <!--android:transformPivotX="0dp"-->
+                <!--android:transformPivotY="0dp"-->
+                <!--android:max="5"/>-->
+
         </LinearLayout>
 
         <LinearLayout
@@ -125,6 +159,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="10dp"
+            android:id="@+id/info_title_googlePage"
+            android:visibility="gone"
             >
             <TextView
                 android:layout_width="0px"
@@ -152,6 +188,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="10dp"
+            android:id="@+id/info_title_website"
+            android:visibility="gone"
             >
             <TextView
                 android:layout_width="0px"

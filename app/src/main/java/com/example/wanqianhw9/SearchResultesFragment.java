@@ -254,7 +254,7 @@ public class SearchResultesFragment extends Fragment {
                             if(count == 2){
                                 setUpResults(results.subList(20,40));
                             } else{
-                                setUpResults(results.subList(40,60));
+                                setUpResults(results.subList(40,results.size()));
                             }
                             mPreviousButton.setEnabled(true);
                             mPreviousButton.setOnClickListener(new View.OnClickListener() {
@@ -263,6 +263,7 @@ public class SearchResultesFragment extends Fragment {
                                     count = count - 1;  // 1  2
                                     if(count == 1){
                                         setUpResults(results.subList(0,20));
+                                        mPreviousButton.setEnabled(false);
                                     } else{
                                         setUpResults(results.subList(20,40));
                                     }

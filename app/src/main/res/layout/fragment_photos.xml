@@ -4,10 +4,31 @@
     android:layout_height="match_parent"
     tools:context="com.example.wanqianhw9.PhotosFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!-- This recycler view shows Results data -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/photos_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:scrollbars="vertical" />
+
+    <ProgressBar
+        android:id="@+id/photosProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="@android:color/black"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/photosErrorMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp"
+        android:text="No Records have been found"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:visibility="gone" />
 
 </FrameLayout>

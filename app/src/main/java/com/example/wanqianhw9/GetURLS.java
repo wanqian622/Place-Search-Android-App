@@ -11,5 +11,6 @@ public class GetURLS {
     static final String YELPMATCH = "http://csci571search-nodejs.us-west-2.elasticbeanstalk.com/getYelpMatches?";
     static final String YELPREVIEWS = "http://csci571search-nodejs.us-west-2.elasticbeanstalk.com/getYelpReviews?getId=";
     static final String TWITTER= "https://twitter.com/intent/tweet?";
+    static final String PLACEDETAILS = "https://maps.googleapis.com/maps/api/place/details/json?placeid=";
 
 }
