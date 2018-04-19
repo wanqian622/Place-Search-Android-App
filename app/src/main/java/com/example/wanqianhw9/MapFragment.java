@@ -71,6 +71,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mMapView = (MapView) mView.findViewById(R.id.map_view);
+        Log.d("map","getmap");
         if (mMapView != null) {
             mMapView.onCreate(null);
             mMapView.onResume();// needed to get the map to display immediately
@@ -117,7 +118,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         googleMap.addMarker(marker);
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(lat, lng)).zoom(12).build();
+                .target(new LatLng(lat, lng)).zoom(15).build();
 
         // Animate the zoom process
         googleMap.animateCamera(CameraUpdateFactory
