@@ -67,30 +67,11 @@ public class LocationTracker implements LocationListener {
                     .isProviderEnabled(LocationManager.GPS_PROVIDER);
 
 
-//            // getting network status
-//            mIsNetworkEnabled = locationManager
-//                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            //!mIsGPSEnabled && !mIsNetworkEnabled
 
             if (!mIsGPSEnabled) {
                 return null;
             } else {
-                // First get location from Network Provider
                 checkLocationPermission();
-//                if (mIsNetworkEnabled) {
-//                    locationManager.requestLocationUpdates(
-//                            LocationManager.NETWORK_PROVIDER,
-//                            MIN_TIME_BW_UPDATES,
-//                            MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-//                    if (locationManager != null) {
-//                        location = locationManager
-//                                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//                        if (location != null) {
-//                            latitude = location.getLatitude();
-//                            longitude = location.getLongitude();
-//                        }
-//                    }
-//                }
                 // if GPS Enabled get lat/long using GPS Services
                 if (mIsGPSEnabled) {
                     if (location == null) {
@@ -106,9 +87,6 @@ public class LocationTracker implements LocationListener {
                                 longitude = location.getLongitude();
                             }
                         }
-                    } else{
-                        latitude = location.getLatitude();
-                        longitude = location.getLongitude();
                     }
                 }
             }

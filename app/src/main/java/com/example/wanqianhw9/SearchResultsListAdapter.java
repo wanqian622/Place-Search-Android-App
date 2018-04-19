@@ -78,9 +78,13 @@ public class SearchResultsListAdapter extends RecyclerView.Adapter<SearchResults
             public void onClick(View view) {
                 String placeId = res.getPlace_id();
                 String placeName = res.getName();
+                Double placeLat = res.getPlace_lat();
+                Double placeLng = res.getPlace_lng();
                 Bundle bundle = new Bundle();
                 bundle.putString("PlaceID", placeId);
                 bundle.putString("PlaceName",placeName);
+                bundle.putDouble("placeLat",placeLat);
+                bundle.putDouble("placeLng",placeLng);
                 Intent intent = new Intent(context, DetailsActivity.class);
                 intent.putExtras(bundle);
                 context.startActivity(intent);

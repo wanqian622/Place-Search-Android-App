@@ -3,6 +3,7 @@ package com.example.wanqianhw9;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,11 +41,14 @@ public class PhotosListAdapter extends RecyclerView.Adapter<PhotosListAdapter.Vi
     public class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView imgview;
         public View layout;
+//        public CardView cv;
 
         public ViewHolder(View v) {
             super(v);
             layout = v;
             imgview = (ImageView) v.findViewById(R.id.photo_item_img);
+//            cv= (CardView) v.findViewById(R.id.photo_card_view);
+
         }
     }
 

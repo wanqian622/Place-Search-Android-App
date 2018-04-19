@@ -78,6 +78,7 @@ public class SearchFragment extends Fragment {
         mLocationTracker.getLocation();
         latitude = mLocationTracker.getLatitude();
         longitude = mLocationTracker.getLongitude();
+        Log.d("latt",new Double(latitude).toString());
 
 
 //        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
