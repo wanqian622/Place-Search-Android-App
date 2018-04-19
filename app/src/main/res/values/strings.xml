@@ -13,6 +13,19 @@
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string-array name = "reviews_array">
+        <item>Google reviews</item>
+        <item>Yelp reviews</item>
+    </string-array>
+
+    <string-array name = "order_array">
+        <item>Default order</item>
+        <item>Highest rating</item>
+        <item>Lowest rating</item>
+        <item>Most recent</item>
+        <item>Least recent</item>
+    </string-array>
+
     <string-array name = "travel_mode_array">
         <item>Driving</item>
         <item>Bicycling</item>
