@@ -91,35 +91,41 @@ public class SearchResultesFragment extends Fragment {
 
     // get here lat and lng
     private void requestForHere(){
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, GetURLS.CURGEO, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                JSONObject jObj = null;
-                try {
-                    jObj = new JSONObject(response);
-                    if(jObj.getString("status").equals("success")){
-                        geoLoc.add(jObj.getDouble("lat"));
-                        geoLoc.add(jObj.getDouble("lon"));
-                        requestForResults();
+        double lat = getActivity().getIntent().getExtras().getDouble("lat");
+        double lng = getActivity().getIntent().getExtras().getDouble("lng");
+        geoLoc.add(lat);
+        geoLoc.add(lng);
+        requestForResults();
 
-                    } else{
-                        mErr.setVisibility(View.VISIBLE);
-                    }
-
-                } catch (JSONException e) {
-                    mErr.setVisibility(View.VISIBLE);
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                mErr.setVisibility(View.VISIBLE);
-            }
-        }) {
-
-        };
-        AppController.getInstance().addToRequestQueue(stringRequest, "Here");
+//        StringRequest stringRequest = new StringRequest(Request.Method.GET, GetURLS.CURGEO, new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//                JSONObject jObj = null;
+//                try {
+//                    jObj = new JSONObject(response);
+//                    if(jObj.getString("status").equals("success")){
+//                        geoLoc.add(jObj.getDouble("lat"));
+//                        geoLoc.add(jObj.getDouble("lon"));
+//                        requestForResults();
+//
+//                    } else{
+//                        mErr.setVisibility(View.VISIBLE);
+//                    }
+//
+//                } catch (JSONException e) {
+//                    mErr.setVisibility(View.VISIBLE);
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                mErr.setVisibility(View.VISIBLE);
+//            }
+//        }) {
+//
+//        };
+//        AppController.getInstance().addToRequestQueue(stringRequest, "Here");
     }
 
 

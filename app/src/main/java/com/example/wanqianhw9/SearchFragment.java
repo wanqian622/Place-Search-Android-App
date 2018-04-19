@@ -45,6 +45,9 @@ public class SearchFragment extends Fragment {
     private TextView mErrLoc;
     private RadioGroup radioGroup;
     private Spinner spinner;
+    private LocationTracker mLocationTracker;
+    private double latitude;
+    private double longitude;
 //    private String otherLoc;
 
 
@@ -71,6 +74,11 @@ public class SearchFragment extends Fragment {
         mSearchButton = (Button) view.findViewById(R.id.search);
         spinner = (Spinner) view.findViewById(R.id.category_spinner);
         mDistanceEditText.setText("10");
+        mLocationTracker = new LocationTracker(getActivity());
+        mLocationTracker.getLocation();
+        latitude = mLocationTracker.getLatitude();
+        longitude = mLocationTracker.getLongitude();
+
 
 //        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
 //                getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
@@ -152,6 +160,8 @@ public class SearchFragment extends Fragment {
                     bundle.putString("otherLoc","here");
                 }
 //                bundle.putString("otherLoc",otherLoc);
+                bundle.putDouble("lat",latitude);
+                bundle.putDouble("lng",longitude);
                 bundle.putInt("getId",getId);
                 bundle.putString("keyword",keyword);
                 bundle.putString("distance",distance);
