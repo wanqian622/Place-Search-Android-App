@@ -13,6 +13,13 @@
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string-array name = "travel_mode_array">
+        <item>Driving</item>
+        <item>Bicycling</item>
+        <item>Transit</item>
+        <item>Walking</item>
+    </string-array>
+
     <string-array name="category_array">
         <item>Default</item>
         <item>Airport</item>
