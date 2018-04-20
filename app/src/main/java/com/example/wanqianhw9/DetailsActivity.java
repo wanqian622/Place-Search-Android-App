@@ -13,10 +13,11 @@ import android.support.v7.widget.Toolbar;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity implements InfoFragment.OnReviewsGetList {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private ReviewsFragment mReviewsFragment;
 
     private int[] tabIcons = {
             R.mipmap.ic_info_outline_white_24dp,
@@ -32,6 +33,7 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
 
         Intent intent = getIntent();
+        mReviewsFragment = new ReviewsFragment();
         String getTitle = intent.getExtras().getString("PlaceName");
         toolbar = (Toolbar) findViewById(R.id.toolbarDetails);
         setSupportActionBar(toolbar);
@@ -63,7 +65,7 @@ public class DetailsActivity extends AppCompatActivity {
         adapter.addFragment(new InfoFragment(), "INFO");
         adapter.addFragment(new PhotosFragment(), "PHOTOS");
         adapter.addFragment(new MapFragment(), "MAP");
-        adapter.addFragment(new ReviewsFragment(), "REVIEWS");
+        adapter.addFragment(mReviewsFragment, "REVIEWS");
         viewPager.setAdapter(adapter);
     }
 
@@ -94,5 +96,10 @@ public class DetailsActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
+    }
+
+    @Override
+    public void onReviewsGetter(List<Reviews> reviews){
+        mReviewsFragment.onGetReviews(reviews);
     }
 }

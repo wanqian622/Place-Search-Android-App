@@ -1,6 +1,7 @@
 package com.example.wanqianhw9;
 
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,14 +33,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class InfoFragment extends Fragment {
-//    private GeoDataClient mGeoDataClient;
+    //    private GeoDataClient mGeoDataClient;
 //    private PlaceDetectionClient mPlaceDetectionClient;
     private String placeId;
     private View mView;
@@ -57,6 +61,7 @@ public class InfoFragment extends Fragment {
     private LinearLayout mGooglePageLinearLayout;
     private LinearLayout mWebsiteLinearLayout;
     private final String APIKEY = "AIzaSyA0TgG8WO6h1YnWcc41_kkS_xFD7tFT1dw";
+    private List<Reviews> googleReviews;
 
     public InfoFragment() {
         // Required empty public constructor
@@ -81,40 +86,31 @@ public class InfoFragment extends Fragment {
         mRatingLinearLayout = (LinearLayout) mView.findViewById(R.id.info_title_rating);
         mGooglePageLinearLayout = (LinearLayout) mView.findViewById(R.id.info_title_googlePage);
         mWebsiteLinearLayout = (LinearLayout) mView.findViewById(R.id.info_title_website);
+        googleReviews = new ArrayList<Reviews>();
 
-//        mGeoDataClient = Places.getGeoDataClient(getContext(), null);
-//        mPlaceDetectionClient = Places.getPlaceDetectionClient(getContext(), null);
         placeId = getActivity().getIntent().getExtras().getString("PlaceID");
         requestForDetails();
 
 
-//        mGeoDataClient.getPlaceById(placeId).addOnCompleteListener(new OnCompleteListener<PlaceBufferResponse>() {
-//            @Override
-//            public void onComplete(@NonNull Task<PlaceBufferResponse> task) {
-//                if (task.isSuccessful()) {
-//                    PlaceBufferResponse places = task.getResult();
-//                    Place myPlace = places.get(0);
-//                    mAddressTextView.setText(myPlace.getAddress());
-//                    mPhoneTextView.setText(myPlace.getPhoneNumber());
-//                    mWebsiteView.setText(myPlace.getWebsiteUri().toString());
-//                    mRatingTextView.setRating(myPlace.getRating());
-//                    int level = myPlace.getPriceLevel();
-//                    String priceLevel = "$";
-//                    for(int i = 0; i < level; i++){
-//                        priceLevel += "$";
-//                    }
-//                    mPriceTextView.setText(priceLevel);
-//                    places.release();
-//                } else {
-//                    mErr.setVisibility(View.VISIBLE);
-//                }
-//            }
-//        });
-
-
-
-
         return mView;
+    }
+
+
+    OnReviewsGetList mCallback;
+
+    public interface OnReviewsGetList{
+        public void onReviewsGetter(List<Reviews> reviews);
+    }
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        try {
+            mCallback = (OnReviewsGetList) context;
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -167,6 +163,26 @@ public class InfoFragment extends Fragment {
                             mRatingTextView.setRating((float)data.getDouble("rating"));
                         }
 
+                        JSONArray array = data.getJSONArray("reviews");
+                        if(array != null && array.length() > 0){
+                            for(int i = 0; i < array.length();i++){
+                                JSONObject obj = array.getJSONObject(i);
+                                String author = obj.getString("author_name");
+                                String author_url = obj.getString("author_url");
+                                String profile = obj.getString("profile_photo_url");
+                                double rate = obj.getDouble("rating");
+                                String text = obj.getString("text");
+                                long timeStamp = obj.getLong("time");
+                                String time = getDate(timeStamp,"yyyy-MM-dd HH:mm:ss");
+                                Reviews res = new Reviews(profile,author,author_url,rate,text,time);
+                                googleReviews.add(res);
+                            }
+                            mCallback.onReviewsGetter(googleReviews);
+
+                        } else{
+                            mCallback.onReviewsGetter(googleReviews);
+                        }
+
                     } else{
                         mErr.setVisibility(View.VISIBLE);
                     }
@@ -185,6 +201,17 @@ public class InfoFragment extends Fragment {
 
         };
         AppController.getInstance().addToRequestQueue(stringRequest, "info");
+    }
+
+    private  String getDate(long milliSeconds, String dateFormat)
+    {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
     }
 
 }

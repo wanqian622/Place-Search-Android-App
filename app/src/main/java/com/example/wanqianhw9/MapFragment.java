@@ -125,8 +125,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .newCameraPosition(cameraPosition));
 
 
-
-
     }
 
 

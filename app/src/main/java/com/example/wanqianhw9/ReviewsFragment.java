@@ -3,6 +3,8 @@ package com.example.wanqianhw9;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+
+import java.util.List;
 
 
 /**
@@ -19,6 +23,11 @@ public class ReviewsFragment extends Fragment {
     private Spinner mReviewsSpinner;
     private Spinner mOrderSpinner;
     private View mView;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private List<Reviews> googleReviews;
+    private List<Reviews> yelpReviews;
 
 
     public ReviewsFragment() {
@@ -33,6 +42,10 @@ public class ReviewsFragment extends Fragment {
         mView = inflater.inflate(R.layout.fragment_reviews, container, false);
         mReviewsSpinner= mView.findViewById(R.id.reviews_spinner);
         mOrderSpinner = mView.findViewById(R.id.order_spinner);
+        recyclerView = mView.findViewById(R.id.reviews_recycler_view);
+        recyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(mLayoutManager);
 
 
         // review spinner
@@ -57,7 +70,7 @@ public class ReviewsFragment extends Fragment {
 
         //order spinner
         // review spinner
-        String defaultOrder = "Default orde";
+        String defaultOrder = "Default order";
         ArrayAdapter<CharSequence> orderAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.order_array, android.R.layout.simple_spinner_item);
         orderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -67,7 +80,7 @@ public class ReviewsFragment extends Fragment {
         mOrderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.v("item", (String) parent.getItemAtPosition(position));
+                Log.d("google",googleReviews.get(0).getAuthor());
             }
 
             @Override
@@ -79,5 +92,12 @@ public class ReviewsFragment extends Fragment {
 
         return mView;
     }
+
+    public void onGetReviews(List<Reviews> reviews){
+        googleReviews = reviews;
+    }
+
+
+
 
 }
