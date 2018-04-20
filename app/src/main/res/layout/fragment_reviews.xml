@@ -4,11 +4,17 @@
     android:layout_height="match_parent"
     tools:context="com.example.wanqianhw9.ReviewsFragment">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="20dp"
+        android:id="@+id/showRviews"
         >
         <Spinner
             android:layout_weight="1"
@@ -23,6 +29,7 @@
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
+        android:layout_below="@+id/showRviews"
         android:id="@+id/reviews_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -47,5 +54,7 @@
         android:textColor="@android:color/black"
         android:textSize="20sp"
         android:visibility="gone" />
+
+    </RelativeLayout>
 
 </FrameLayout>

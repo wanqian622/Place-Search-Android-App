@@ -80,7 +80,7 @@ public class ReviewsFragment extends Fragment {
         mOrderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("google",googleReviews.get(0).getAuthor());
+                setUpReviews(googleReviews);
             }
 
             @Override
@@ -95,6 +95,12 @@ public class ReviewsFragment extends Fragment {
 
     public void onGetReviews(List<Reviews> reviews){
         googleReviews = reviews;
+    }
+
+    private void setUpReviews(List<Reviews> reviews){
+
+        mAdapter = new ReviewsListAdapter(reviews,getContext());
+        recyclerView.setAdapter(mAdapter);
     }
 
 
