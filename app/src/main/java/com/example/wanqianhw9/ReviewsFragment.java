@@ -60,11 +60,12 @@ public class ReviewsFragment extends Fragment {
         mReviewsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.v("item", (String) parent.getItemAtPosition(position));
+                setUpReviews(googleReviews);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+                setUpReviews(yelpReviews);
 
             }
         });
@@ -81,7 +82,7 @@ public class ReviewsFragment extends Fragment {
         mOrderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setUpReviews(googleReviews);
+
             }
 
             @Override

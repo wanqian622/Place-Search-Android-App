@@ -106,8 +106,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         MapsInitializer.initialize(getContext());
-        double lat = getActivity().getIntent().getExtras().getDouble("PlaceLat");
-        double lng = getActivity().getIntent().getExtras().getDouble("PlaceLng");
+        double lat = getActivity().getIntent().getExtras().getDouble("placeLat");
+        double lng = getActivity().getIntent().getExtras().getDouble("placeLng");
+
         String address = getActivity().getIntent().getExtras().getString("PlaceName");
 
         // Create marker on google map
