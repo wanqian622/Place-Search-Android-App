@@ -60,7 +60,7 @@ public class InfoFragment extends Fragment {
     private LinearLayout mRatingLinearLayout;
     private LinearLayout mGooglePageLinearLayout;
     private LinearLayout mWebsiteLinearLayout;
-    private final String APIKEY = "AIzaSyA0TgG8WO6h1YnWcc41_kkS_xFD7tFT1dw";
+//    private final String APIKEY = "AIzaSyA0TgG8WO6h1YnWcc41_kkS_xFD7tFT1dw";
     private List<Reviews> googleReviews;
 
     public InfoFragment() {
@@ -89,129 +89,175 @@ public class InfoFragment extends Fragment {
         googleReviews = new ArrayList<Reviews>();
 
         placeId = getActivity().getIntent().getExtras().getString("PlaceID");
-        requestForDetails();
+        String address = this.getArguments().getString("address");
+        Log.d("address",address);
+
+        Bundle bundle = getArguments();
+        if(bundle != null){
+            mErr.setVisibility(View.GONE);
+            String getAddress = bundle.getString("address");
+            if(getAddress != null){
+                mAddressLinearLayout.setVisibility(View.VISIBLE);
+                mAddressTextView.setText(getAddress);
+            }
+
+            String getPhone = bundle.getString("phone");
+            if(getPhone != null){
+                mPhoneLinearLayout.setVisibility(View.VISIBLE);
+                mPhoneTextView.setText(getPhone);
+            }
+
+            String getWebsite = bundle.getString("website");
+            if(getWebsite != null){
+                mWebsiteLinearLayout.setVisibility(View.VISIBLE);
+                mWebsiteView.setText(getWebsite);
+            }
+
+            String getGooglePage = bundle.getString("googlePage");
+            if(getGooglePage != null){
+                mGooglePageLinearLayout.setVisibility(View.VISIBLE);
+                mGooglePageTextView.setText(getGooglePage);
+            }
+
+            String priceLevel = bundle.getString("price");
+            if(priceLevel != null){
+                mPriceLinearLayout.setVisibility(View.VISIBLE);
+                mPriceTextView.setText(priceLevel);
+            }
+
+            Double rating = bundle.getDouble("rating");
+            if(rating != null){
+                mRatingLinearLayout.setVisibility(View.VISIBLE);
+                mRatingTextView.setRating(rating.floatValue());
+            }
+
+        } else{
+            mErr.setVisibility(View.VISIBLE);
+        }
+
+        
 
 
         return mView;
     }
 
 
-    OnReviewsGetList mCallback;
-
-    public interface OnReviewsGetList{
-        public void onReviewsGetter(List<Reviews> reviews);
-    }
-
-    @Override
-    public void onAttach(Context context){
-        super.onAttach(context);
-        try {
-            mCallback = (OnReviewsGetList) context;
-        } catch (ClassCastException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
-    // get results
-    private void requestForDetails(){
-
-
-        String queryUrl = GetURLS.PLACEDETAILS + placeId + "&key=" + APIKEY;
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, queryUrl, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                JSONObject jObj = null;
-                try {
-                    jObj = new JSONObject(response);
-                    if(jObj.getJSONObject("result") != null){
-                        JSONObject data = jObj.getJSONObject("result");
-                        String getAddress = data.getString("formatted_address");
-                        if(getAddress != null && getAddress != ""){
-                            mAddressLinearLayout.setVisibility(View.VISIBLE);
-                            mAddressTextView.setText(getAddress);
-                        }
-                        String getPhone = data.getString("formatted_phone_number");
-                        if(getPhone != null && getPhone != ""){
-                            mPhoneLinearLayout.setVisibility(View.VISIBLE);
-                            mPhoneTextView.setText(getPhone);
-                        }
-                        String getWebsite = data.getString("website");
-                        if(getWebsite != null && getWebsite != ""){
-                            mWebsiteLinearLayout.setVisibility(View.VISIBLE);
-                            mWebsiteView.setText(getWebsite);
-                        }
-                        String getGooglePage = data.getString("url");
-                        if(getGooglePage != null && getGooglePage != ""){
-                            mGooglePageLinearLayout.setVisibility(View.VISIBLE);
-                            mGooglePageTextView.setText(getGooglePage);
-                        }
-
-                        Integer level = new Integer(data.getInt("price_level"));
-                        if(level != null){
-                            String priceLevel = "$";
-                            for(int i = 0; i < level; i++){
-                                priceLevel += "$";
-                            }
-                            mPriceLinearLayout.setVisibility(View.VISIBLE);
-                            mPriceTextView.setText(priceLevel);
-                        }
-                        Double getRating = data.getDouble("rating");
-                        if(getRating != null){
-                            mRatingLinearLayout.setVisibility(View.VISIBLE);
-                            mRatingTextView.setRating((float)data.getDouble("rating"));
-                        }
-
-                        JSONArray array = data.getJSONArray("reviews");
-                        if(array != null && array.length() > 0){
-                            for(int i = 0; i < array.length();i++){
-                                JSONObject obj = array.getJSONObject(i);
-                                String author = obj.getString("author_name");
-                                String author_url = obj.getString("author_url");
-                                String profile = obj.getString("profile_photo_url");
-                                double rate = obj.getDouble("rating");
-                                String text = obj.getString("text");
-                                long timeStamp = obj.getLong("time");
-                                String time = getDate(timeStamp,"yyyy-MM-dd HH:mm:ss");
-                                Reviews res = new Reviews(profile,author,author_url,rate,text,time);
-                                googleReviews.add(res);
-                            }
-                            mCallback.onReviewsGetter(googleReviews);
-
-                        } else{
-                            mCallback.onReviewsGetter(googleReviews);
-                        }
-
-                    } else{
-                        mErr.setVisibility(View.VISIBLE);
-                    }
-
-                } catch (Exception e) {
-//                    mErr.setVisibility(View.VISIBLE);
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                mErr.setVisibility(View.VISIBLE);
-            }
-        }) {
-
-        };
-        AppController.getInstance().addToRequestQueue(stringRequest, "info");
-    }
-
-    private  String getDate(long milliSeconds, String dateFormat)
-    {
-        // Create a DateFormatter object for displaying date in specified format.
-        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
-
-        // Create a calendar object that will convert the date and time value in milliseconds to date.
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        return formatter.format(calendar.getTime());
-    }
+//    OnReviewsGetList mCallback;
+//
+//    public interface OnReviewsGetList{
+//        public void onReviewsGetter(List<Reviews> reviews);
+//    }
+//
+//    @Override
+//    public void onAttach(Context context){
+//        super.onAttach(context);
+//        try {
+//            mCallback = (OnReviewsGetList) context;
+//        } catch (ClassCastException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
+//
+//
+//    // get results
+//    private void requestForDetails(){
+//
+//
+//        String queryUrl = GetURLS.PLACEDETAILS + placeId + "&key=" + APIKEY;
+//        StringRequest stringRequest = new StringRequest(Request.Method.GET, queryUrl, new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//                JSONObject jObj = null;
+//                try {
+//                    jObj = new JSONObject(response);
+//                    if(jObj.getJSONObject("result") != null){
+//                        JSONObject data = jObj.getJSONObject("result");
+//                        String getAddress = data.getString("formatted_address");
+//                        if(getAddress != null && getAddress != ""){
+//                            mAddressLinearLayout.setVisibility(View.VISIBLE);
+//                            mAddressTextView.setText(getAddress);
+//                        }
+//                        String getPhone = data.getString("formatted_phone_number");
+//                        if(getPhone != null && getPhone != ""){
+//                            mPhoneLinearLayout.setVisibility(View.VISIBLE);
+//                            mPhoneTextView.setText(getPhone);
+//                        }
+//                        String getWebsite = data.getString("website");
+//                        if(getWebsite != null && getWebsite != ""){
+//                            mWebsiteLinearLayout.setVisibility(View.VISIBLE);
+//                            mWebsiteView.setText(getWebsite);
+//                        }
+//                        String getGooglePage = data.getString("url");
+//                        if(getGooglePage != null && getGooglePage != ""){
+//                            mGooglePageLinearLayout.setVisibility(View.VISIBLE);
+//                            mGooglePageTextView.setText(getGooglePage);
+//                        }
+//
+//                        Integer level = new Integer(data.getInt("price_level"));
+//                        if(level != null){
+//                            String priceLevel = "$";
+//                            for(int i = 0; i < level; i++){
+//                                priceLevel += "$";
+//                            }
+//                            mPriceLinearLayout.setVisibility(View.VISIBLE);
+//                            mPriceTextView.setText(priceLevel);
+//                        }
+//                        Double getRating = data.getDouble("rating");
+//                        if(getRating != null){
+//                            mRatingLinearLayout.setVisibility(View.VISIBLE);
+//                            mRatingTextView.setRating((float)data.getDouble("rating"));
+//                        }
+//
+//                        JSONArray array = data.getJSONArray("reviews");
+//                        if(array != null && array.length() > 0){
+//                            for(int i = 0; i < array.length();i++){
+//                                JSONObject obj = array.getJSONObject(i);
+//                                String author = obj.getString("author_name");
+//                                String author_url = obj.getString("author_url");
+//                                String profile = obj.getString("profile_photo_url");
+//                                double rate = obj.getDouble("rating");
+//                                String text = obj.getString("text");
+//                                long timeStamp = obj.getLong("time");
+//                                String time = getDate(timeStamp,"yyyy-MM-dd HH:mm:ss");
+//                                Reviews res = new Reviews(profile,author,author_url,rate,text,time);
+//                                googleReviews.add(res);
+//                            }
+//                            mCallback.onReviewsGetter(googleReviews);
+//
+//                        } else{
+//                            mCallback.onReviewsGetter(googleReviews);
+//                        }
+//
+//                    } else{
+//                        mErr.setVisibility(View.VISIBLE);
+//                    }
+//
+//                } catch (Exception e) {
+////                    mErr.setVisibility(View.VISIBLE);
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                mErr.setVisibility(View.VISIBLE);
+//            }
+//        }) {
+//
+//        };
+//        AppController.getInstance().addToRequestQueue(stringRequest, "info");
+//    }
+//
+//    private  String getDate(long milliSeconds, String dateFormat)
+//    {
+//        // Create a DateFormatter object for displaying date in specified format.
+//        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+//
+//        // Create a calendar object that will convert the date and time value in milliseconds to date.
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.setTimeInMillis(milliSeconds);
+//        return formatter.format(calendar.getTime());
+//    }
 
 }
