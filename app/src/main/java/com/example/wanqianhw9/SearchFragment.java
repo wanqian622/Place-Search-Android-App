@@ -69,8 +69,7 @@ public class SearchFragment extends Fragment {
         mErrKeyword.setVisibility(View.GONE);
         mErrLoc = (TextView) view.findViewById(R.id.errorLoc);
         mErrLoc.setVisibility(View.GONE);
-       radioGroup = (RadioGroup) view.findViewById(R.id.radioGroup);
-
+        radioGroup = (RadioGroup) view.findViewById(R.id.radioGroup);
         mSearchButton = (Button) view.findViewById(R.id.search);
         spinner = (Spinner) view.findViewById(R.id.category_spinner);
         mDistanceEditText.setText("10");
@@ -104,7 +103,7 @@ public class SearchFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String str = mKeywordEditText.getText().toString();
-                if(str.matches("^[a-zA-z]+$")){
+                if(str.matches("^[a-zA-z\\s]+$")){
                     mErrKeyword.setVisibility(View.GONE);
                 } else{
                     mErrKeyword.setVisibility(View.VISIBLE);
@@ -113,14 +112,38 @@ public class SearchFragment extends Fragment {
 
                 if(radioGroup.getCheckedRadioButtonId() == R.id.radio_other){
                     String str2 = mOtherLocEditText.getText().toString();
-                    if(str.trim().matches("^[a-zA-z]+$")){
+                    if(str2.trim().matches("^[a-zA-z\\s]+$")){
                         mErrLoc.setVisibility(View.GONE);
                     } else{
                         mErrKeyword.setVisibility(View.VISIBLE);
                     }
-                } else{
-
                 }
+
+                mOtherLocEditText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        mErrLoc.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        String str = mOtherLocEditText.getText().toString();
+                        if(str.length() == 0){
+                            mErrLoc.setVisibility(View.VISIBLE);
+                        } else{
+                            mErrLoc.setVisibility(View.GONE);
+                        }
+
+                    }
+                });
+
+
+
 
                 mKeywordEditText.addTextChangedListener(new TextWatcher() {
                     @Override
@@ -130,7 +153,7 @@ public class SearchFragment extends Fragment {
 
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                        mErrKeyword.setVisibility(View.GONE);
                     }
 
                     @Override
@@ -149,7 +172,10 @@ public class SearchFragment extends Fragment {
 
                 Bundle bundle = new Bundle();
                 String keyword = mKeywordEditText.getText().toString();
-                String distance = mDistanceEditText.getText().toString();
+                String distance = "10";
+                if(mDistanceEditText.getText() != null){
+                    distance = mDistanceEditText.getText().toString();
+                }
 
 
                 String type = spinner.getSelectedItem().toString();
@@ -160,16 +186,20 @@ public class SearchFragment extends Fragment {
                 } else{
                     bundle.putString("otherLoc","here");
                 }
-//                bundle.putString("otherLoc",otherLoc);
+
                 bundle.putDouble("lat",latitude);
                 bundle.putDouble("lng",longitude);
                 bundle.putInt("getId",getId);
                 bundle.putString("keyword",keyword);
                 bundle.putString("distance",distance);
                 bundle.putString("type",type);
-                Intent searchResultsIntent = new Intent(getActivity(), SearchResultesActivity.class);
-                searchResultsIntent.putExtras(bundle);
-                startActivity(searchResultsIntent);
+
+                if (mErrKeyword.getVisibility() == View.GONE && mErrLoc.getVisibility() == View.GONE) {
+                    Intent searchResultsIntent = new Intent(getActivity(), SearchResultesActivity.class);
+                    searchResultsIntent.putExtras(bundle);
+                    startActivity(searchResultsIntent);
+                }
+
 
             }
         });
@@ -196,7 +226,7 @@ public class SearchFragment extends Fragment {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId){
+                switch (checkedId) {
                     case R.id.radio_here:
                         mOtherLocEditText.setEnabled(false);
                         mOtherLocEditText.setInputType(InputType.TYPE_NULL);
@@ -213,9 +243,6 @@ public class SearchFragment extends Fragment {
 
         return view;
     }
-
-
-
 
 }
 
