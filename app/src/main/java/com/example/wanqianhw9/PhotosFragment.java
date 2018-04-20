@@ -30,11 +30,9 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class PhotosFragment extends Fragment {
-    private GeoDataClient mGeoDataClient;
-    private PlaceDetectionClient mPlaceDetectionClient;
     private View mView;
     private String placeId;
-    private List<PlacePhotoMetadata> photosList;
+    private List<PlacePhotoMetadata> getPhotosList;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -51,38 +49,18 @@ public class PhotosFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_photos, container, false);
-        mGeoDataClient = Places.getGeoDataClient(getContext(), null);
-        mPlaceDetectionClient = Places.getPlaceDetectionClient(getContext(), null);
-        placeId = getActivity().getIntent().getExtras().getString("PlaceID");
-        photosList = new ArrayList<PlacePhotoMetadata>();
+        getPhotosList = DetailsActivity.photosList;
         recyclerView = (RecyclerView) mView.findViewById(R.id.photos_recycler_view);
         recyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
-        getPhotoMetadata();
+        setUpPhotos();
         return mView;
     }
 
-    private void getPhotoMetadata() {
-        final Task<PlacePhotoMetadataResponse> photoMetadataResponse = mGeoDataClient.getPlacePhotos(placeId);
-        photoMetadataResponse.addOnCompleteListener(new OnCompleteListener<PlacePhotoMetadataResponse>() {
-            @Override
-            public void onComplete(@NonNull Task<PlacePhotoMetadataResponse> task) {
-                PlacePhotoMetadataResponse photos = task.getResult();
-                PlacePhotoMetadataBuffer photoMetadataBuffer = photos.getPhotoMetadata();
-                for(PlacePhotoMetadata photoMetadata : photoMetadataBuffer){
-                    photosList.add(photoMetadata.freeze());
-                    //photoMetadataBuffer.get(0).freeze()
-                }
-                photoMetadataBuffer.release();
-                setUpPhotos();
-            }
-        });
-    }
 
     private void setUpPhotos(){
-
-        mAdapter = new PhotosListAdapter(photosList,getContext());
+        mAdapter = new PhotosListAdapter(getPhotosList,getContext());
         recyclerView.setAdapter(mAdapter);
     }
 

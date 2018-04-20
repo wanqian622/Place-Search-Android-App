@@ -46,6 +46,7 @@ public class ReviewsFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
+        googleReviews = DetailsActivity.googleReviews;
 
 
         // review spinner
@@ -91,10 +92,6 @@ public class ReviewsFragment extends Fragment {
 
 
         return mView;
-    }
-
-    public void onGetReviews(List<Reviews> reviews){
-        googleReviews = reviews;
     }
 
     private void setUpReviews(List<Reviews> reviews){
