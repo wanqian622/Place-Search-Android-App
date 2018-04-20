@@ -136,56 +136,97 @@ public class DetailsActivity extends AppCompatActivity {
                     jObj = new JSONObject(response);
                     if(jObj.getJSONObject("result") != null){
                         JSONObject data = jObj.getJSONObject("result");
-                        String getAddress = data.getString("formatted_address");
-                        if(getAddress != null && getAddress != ""){
+                        try{
 
-                            bundle.putString("address",getAddress);
-                        }
-                        String getPhone = data.getString("formatted_phone_number");
-                        if(getPhone != null && getPhone != ""){
-                            bundle.putString("phone",getPhone);
-                        }
-                        String getWebsite = data.getString("website");
-                        if(getWebsite != null && getWebsite != ""){
-                            bundle.putString("website",getWebsite);
-                        }
-                        String getGooglePage = data.getString("url");
-                        if(getGooglePage != null && getGooglePage != ""){
-                            bundle.putString("googlePage",getGooglePage);
-                        }
-
-                        Integer level = new Integer(data.getInt("price_level"));
-                        if(level != null){
-                            String priceLevel = "$";
-                            for(int i = 0; i < level; i++){
-                                priceLevel += "$";
-                            }
-                            bundle.putString("price",priceLevel);
-                        }
-                        Double getRating = data.getDouble("rating");
-                        if(getRating != null){
-                            bundle.putDouble("rating",getRating);
-                        }
-
-                        JSONArray array = data.getJSONArray("reviews");
-                        if(array != null && array.length() > 0){
-                            for(int i = 0; i < array.length();i++){
-                                JSONObject obj = array.getJSONObject(i);
-                                String author = obj.getString("author_name");
-                                String author_url = obj.getString("author_url");
-                                String profile = obj.getString("profile_photo_url");
-                                double rate = obj.getDouble("rating");
-                                String text = obj.getString("text");
-                                long timeStamp = obj.getLong("time");
-                                String time = getDate(timeStamp,"yyyy-MM-dd HH:mm:ss");
-                                Reviews res = new Reviews(profile,author,author_url,rate,text,time);
-                                googleReviews.add(res);
+                            String getAddress = data.getString("formatted_address");
+                            if(getAddress != null && getAddress != ""){
+                                bundle.putString("address",getAddress);
                             }
 
+                        }
+                        catch(Exception e){
+                            bundle.putString("address",null);
+                        }
+
+                        try{
+                            String getPhone = data.getString("formatted_phone_number");
+                            if(getPhone != null && getPhone != ""){
+                                bundle.putString("phone",getPhone);
+                            }
+
+                        } catch(Exception e){
+                            bundle.putString("phone",null);
+                        }
+
+                        try{
+                            String getWebsite = data.getString("website");
+                            if(getWebsite != null && getWebsite != ""){
+                                bundle.putString("website",getWebsite);
+                            }
+
+                        } catch(Exception e){
+
+                            bundle.putString("website",null);
+                        }
+
+                        try{
+
+                            String getGooglePage = data.getString("url");
+                            if(getGooglePage != null && getGooglePage != ""){
+                                bundle.putString("googlePage",getGooglePage);
+                            }
+
+                        } catch(Exception e){
+                            bundle.putString("googlePage",null);
+                        }
+
+                        try{
+                            Integer level = new Integer(data.getInt("price_level"));
+                            if(level != null){
+                                String priceLevel = "$";
+                                for(int i = 0; i < level; i++){
+                                    priceLevel += "$";
+                                }
+                                bundle.putString("price",priceLevel);
+                            }
+
+                        } catch(Exception e){
+                            bundle.putString("price",null);
+                        }
+
+                        try{
+                            Double getRating = data.getDouble("rating");
+                            if(getRating != null){
+                                bundle.putDouble("rating",getRating);
+                            }
+
+                        } catch(Exception e){
+                            bundle.putDouble("rating",-1);
+                        }
+
+                        try{
+                            JSONArray array = data.getJSONArray("reviews");
+                            if(array != null && array.length() > 0){
+                                for(int i = 0; i < array.length();i++){
+                                    JSONObject obj = array.getJSONObject(i);
+                                    String author = obj.getString("author_name");
+                                    String author_url = obj.getString("author_url");
+                                    String profile = obj.getString("profile_photo_url");
+                                    double rate = obj.getDouble("rating");
+                                    String text = obj.getString("text");
+                                    long timeStamp = obj.getLong("time");
+                                    String time = getDate(timeStamp,"yyyy-MM-dd HH:mm:ss");
+                                    Reviews res = new Reviews(profile,author,author_url,rate,text,time);
+                                    googleReviews.add(res);
+                                }
+
+                            }
+
+                        } catch(Exception e){
+                            googleReviews.add(null);
                         }
                         mInfoFragment.setArguments(bundle);
                         getPhotoMetadata();
-
                     } else{
 //                        mErr.setVisibility(View.VISIBLE);
                         Log.d("err","error");

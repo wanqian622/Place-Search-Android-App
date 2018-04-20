@@ -61,7 +61,7 @@ public class InfoFragment extends Fragment {
     private LinearLayout mGooglePageLinearLayout;
     private LinearLayout mWebsiteLinearLayout;
 //    private final String APIKEY = "AIzaSyA0TgG8WO6h1YnWcc41_kkS_xFD7tFT1dw";
-    private List<Reviews> googleReviews;
+
 
     public InfoFragment() {
         // Required empty public constructor
@@ -86,7 +86,7 @@ public class InfoFragment extends Fragment {
         mRatingLinearLayout = (LinearLayout) mView.findViewById(R.id.info_title_rating);
         mGooglePageLinearLayout = (LinearLayout) mView.findViewById(R.id.info_title_googlePage);
         mWebsiteLinearLayout = (LinearLayout) mView.findViewById(R.id.info_title_website);
-        googleReviews = new ArrayList<Reviews>();
+
 
         placeId = getActivity().getIntent().getExtras().getString("PlaceID");
         String address = this.getArguments().getString("address");
@@ -96,39 +96,52 @@ public class InfoFragment extends Fragment {
         if(bundle != null){
             mErr.setVisibility(View.GONE);
             String getAddress = bundle.getString("address");
-            if(getAddress != null){
+            Log.d("getAdd",getAddress);
+            if(getAddress !=  null){
                 mAddressLinearLayout.setVisibility(View.VISIBLE);
                 mAddressTextView.setText(getAddress);
+            } else{
+                mAddressLinearLayout.setVisibility(View.GONE);
             }
 
             String getPhone = bundle.getString("phone");
             if(getPhone != null){
                 mPhoneLinearLayout.setVisibility(View.VISIBLE);
                 mPhoneTextView.setText(getPhone);
+            }else{
+                mPhoneLinearLayout.setVisibility(View.GONE);
             }
 
             String getWebsite = bundle.getString("website");
             if(getWebsite != null){
                 mWebsiteLinearLayout.setVisibility(View.VISIBLE);
                 mWebsiteView.setText(getWebsite);
+            }else{
+                mWebsiteLinearLayout.setVisibility(View.GONE);
             }
 
             String getGooglePage = bundle.getString("googlePage");
             if(getGooglePage != null){
                 mGooglePageLinearLayout.setVisibility(View.VISIBLE);
                 mGooglePageTextView.setText(getGooglePage);
+            }else{
+                mGooglePageLinearLayout.setVisibility(View.GONE);
             }
 
             String priceLevel = bundle.getString("price");
             if(priceLevel != null){
                 mPriceLinearLayout.setVisibility(View.VISIBLE);
                 mPriceTextView.setText(priceLevel);
+            }else{
+                mPriceLinearLayout.setVisibility(View.GONE);
             }
 
-            Double rating = bundle.getDouble("rating");
-            if(rating != null){
+            double rating = bundle.getDouble("rating");
+            if(rating != -1){
                 mRatingLinearLayout.setVisibility(View.VISIBLE);
-                mRatingTextView.setRating(rating.floatValue());
+                mRatingTextView.setRating((float)rating);
+            }else{
+                mRatingLinearLayout.setVisibility(View.GONE);
             }
 
         } else{
