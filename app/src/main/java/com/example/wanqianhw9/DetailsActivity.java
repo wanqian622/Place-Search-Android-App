@@ -48,6 +48,7 @@ public class DetailsActivity extends AppCompatActivity {
     private PlaceDetectionClient mPlaceDetectionClient;
     public static List<PlacePhotoMetadata> photosList;
     public static List<Reviews> googleReviews;
+    public static List<Reviews> yelpReviews;
 
     private int[] tabIcons = {
             R.mipmap.ic_info_outline_white_24dp,
@@ -70,6 +71,7 @@ public class DetailsActivity extends AppCompatActivity {
         mPhotosFragment = new PhotosFragment();
         photosList = new ArrayList<PlacePhotoMetadata>();
         googleReviews = new ArrayList<Reviews>();
+        yelpReviews = new ArrayList<Reviews>();
         getTitle = intent.getExtras().getString("PlaceName");
         placeId = intent.getExtras().getString("PlaceID");
         bundle = new Bundle();
@@ -223,7 +225,7 @@ public class DetailsActivity extends AppCompatActivity {
                             }
 
                         } catch(Exception e){
-                            googleReviews.add(null);
+                            e.printStackTrace();
                         }
                         mInfoFragment.setArguments(bundle);
                         getPhotoMetadata();
