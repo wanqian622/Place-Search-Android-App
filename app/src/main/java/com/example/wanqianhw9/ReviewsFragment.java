@@ -66,9 +66,9 @@ public class ReviewsFragment extends Fragment {
         recyclerView.setLayoutManager(mLayoutManager);
         mErr = mView.findViewById(R.id.reviewsErrorMessage);
         googleReviews = DetailsActivity.googleReviews;
-        defaultGoogleReviews = DetailsActivity.googleReviews;
+        defaultGoogleReviews = new ArrayList<>(DetailsActivity.googleReviews);
         yelpReviews = DetailsActivity.yelpReviews;
-        defaultYelpReviews = DetailsActivity.yelpReviews;
+        defaultYelpReviews = new ArrayList<>(DetailsActivity.yelpReviews);
         getReviewsType = GOOGLE;
         getOrderType = DEFAULT_ORDER;
 

@@ -216,7 +216,7 @@ public class DetailsActivity extends AppCompatActivity {
                                     String profile = obj.getString("profile_photo_url");
                                     double rate = obj.getDouble("rating");
                                     String text = obj.getString("text");
-                                    long timeStamp = obj.getLong("time");
+                                    long timeStamp = obj.getLong("time") * 1000;
                                     String time = getDate(timeStamp,"yyyy-MM-dd HH:mm:ss");
                                     Reviews res = new Reviews(profile,author,author_url,rate,text,time);
                                     googleReviews.add(res);

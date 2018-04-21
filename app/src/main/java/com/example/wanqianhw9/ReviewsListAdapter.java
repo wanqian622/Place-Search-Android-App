@@ -5,6 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.URLSpan;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +63,13 @@ public class ReviewsListAdapter extends RecyclerView.Adapter<ReviewsListAdapter.
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final Reviews res = reviews.get(position);
-        holder.name.setText(res.getAuthor());
+        String linkText = "<a href='" + res.getAuthorUrl() + "'>" + res.getAuthor() + "</a>";
+        holder.name.setClickable(true);
+        holder.name.setAutoLinkMask(0);
+        holder.name.setText(Html.fromHtml(linkText,Html.FROM_HTML_MODE_LEGACY));
+        holder.name.setMovementMethod(LinkMovementMethod.getInstance());
+        URLSpanNoUnderline.removeUnderlines((Spannable)holder.name.getText());
+
         holder.description.setText(res.getDescription());
         holder.rating.setRating((float)res.getRate());
         holder.time.setText(res.getReview_time());
@@ -131,4 +144,6 @@ public class ReviewsListAdapter extends RecyclerView.Adapter<ReviewsListAdapter.
 
         return bitmap;
     }
+
+
 }
