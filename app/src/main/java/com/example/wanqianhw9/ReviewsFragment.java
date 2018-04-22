@@ -40,7 +40,7 @@ public class ReviewsFragment extends Fragment {
     private String getReviewsType;
     private String getOrderType;
     private static final String GOOGLE = "Google reviews";
-    private static final String YELP = "Default order";
+    private static final String YELP = "Yelp reviews";
     private static final String DEFAULT_ORDER = "Default order";
     private static final String HIGHEST_RATING = "Highest rating";
     private static final String LOWEST_RATING = "Lowest rating";
@@ -177,6 +177,7 @@ public class ReviewsFragment extends Fragment {
                                 }
                                 break;
                             case YELP:
+                                Log.d("check","111");
                                 if(defaultYelpReviews.size() < 1 || yelpReviews.size() < 1){
                                     mErr.setVisibility(View.VISIBLE);
                                     setUpReviews(defaultYelpReviews);

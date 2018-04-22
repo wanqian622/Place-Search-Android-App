@@ -1,6 +1,7 @@
 package com.example.wanqianhw9;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -49,6 +50,12 @@ public class DetailsActivity extends AppCompatActivity {
     public static List<PlacePhotoMetadata> photosList;
     public static List<Reviews> googleReviews;
     public static List<Reviews> yelpReviews;
+    private String zipCode;
+    private String country;
+    private String city;
+    private String state;
+    private String getAddress;
+    private String bestId;
 
     private int[] tabIcons = {
             R.mipmap.ic_info_outline_white_24dp,
@@ -75,6 +82,12 @@ public class DetailsActivity extends AppCompatActivity {
         getTitle = intent.getExtras().getString("PlaceName");
         placeId = intent.getExtras().getString("PlaceID");
         bundle = new Bundle();
+        zipCode = "";
+        country = "";
+        city= "";
+        state = "";
+        getAddress = "";
+        bestId = "";
         requestForDetails();
     }
 
@@ -140,7 +153,7 @@ public class DetailsActivity extends AppCompatActivity {
                         JSONObject data = jObj.getJSONObject("result");
                         try{
 
-                            String getAddress = data.getString("formatted_address");
+                            getAddress = data.getString("formatted_address");
                             if(getAddress != null && getAddress != ""){
                                 bundle.putString("address",getAddress);
                             }
@@ -227,8 +240,34 @@ public class DetailsActivity extends AppCompatActivity {
                         } catch(Exception e){
                             e.printStackTrace();
                         }
+
+                        try{
+                            JSONArray add_component = data.getJSONArray("address_components");
+                            if(add_component != null && add_component.length() > 0){
+                                for(int k = 0; k < add_component.length(); k++){
+                                    JSONObject obj1 = add_component.getJSONObject(k);
+                                    JSONArray obj2 = obj1.getJSONArray("types");
+                                    String addType = obj2.getString(0);
+                                    if(addType.equals("country")){
+                                        country = obj1.getString("short_name");
+                                    }
+                                    if(addType.equals("postal_code")){
+                                        zipCode= obj1.getString("short_name");
+                                    }
+                                    if(addType.equals("locality")){
+                                        city = obj1.getString("short_name");
+                                    }
+                                    if(addType.equals("administrative_area_level_1")){
+                                        state = obj1.getString("short_name");
+                                    }
+                                }
+                            }
+                        } catch(Exception e){
+                            e.printStackTrace();
+                        }
+
                         mInfoFragment.setArguments(bundle);
-                        getPhotoMetadata();
+                        requestForYelp();
                     } else{
 //                        mErr.setVisibility(View.VISIBLE);
                         Log.d("err","error");
@@ -291,6 +330,83 @@ public class DetailsActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void requestForYelp(){
+        String[] add = getAddress.split(",");
+        String matchAddress1 = add[0];
+        String matchAddress2 = add[1] + "," + add[2];
+        String yelpURL = GetURLS.YELPMATCH + "matchName=" + Uri.encode(getTitle) + "&matchAddress1=" + Uri.encode(matchAddress1) + "&matchAddress2=" + Uri.encode(matchAddress2) + "&matchCity=" + Uri.encode(city) + "&matchState=" + state + "&matchCountry=" + country + "&matchZipCode=" + zipCode;
+        Log.d("yelpUrl",yelpURL);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, yelpURL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                JSONObject jObj = null;
+                try {
+                    jObj = new JSONObject(response);
+                    if(jObj.getString("bestId") != null && jObj.getInt("error") == 0){
+                        bestId = jObj.getString("bestId");
+                        requestForYelpReviews();
+                    }
+
+                } catch (Exception e) {
+//                    mErr.setVisibility(View.VISIBLE);
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+//                mErr.setVisibility(View.VISIBLE);
+                error.printStackTrace();
+            }
+        }) {
+
+        };
+        AppController.getInstance().addToRequestQueue(stringRequest, "yelp");
+
+    }
+
+    private void requestForYelpReviews(){
+        String yelpUrl = GetURLS.YELPREVIEWS +bestId;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, yelpUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                JSONObject jObj = null;
+                try {
+                    jObj = new JSONObject(response);
+                    if(jObj.getInt("error") == 0 && jObj.getJSONArray("data") != null && jObj.getJSONArray("data").length() > 0){
+                        JSONArray arr = jObj.getJSONArray("data");
+                        for(int i = 0; i < arr.length(); i++){
+                            JSONObject obj = arr.getJSONObject(i);
+                            String author_url = obj.getString("url");
+                            String text = obj.getString("text");
+                            double rate = obj.getDouble("rating");
+                            String time = obj.getString("time_created");
+                            JSONObject obj2 = obj.getJSONObject("user");
+                            String author = obj2.getString("name");
+                            String profile = obj2.getString("image_url");
+                            Reviews res = new Reviews(profile,author,author_url,rate,text,time);
+                            yelpReviews.add(res);
+                        }
+                    }
+
+                } catch (Exception e) {
+//                    mErr.setVisibility(View.VISIBLE);
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+//                mErr.setVisibility(View.VISIBLE);
+                error.printStackTrace();
+            }
+        }) {
+
+        };
+        getPhotoMetadata();
+        AppController.getInstance().addToRequestQueue(stringRequest, "yelpReviews");
     }
 
 

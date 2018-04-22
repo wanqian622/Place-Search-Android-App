@@ -5,7 +5,6 @@ package com.example.wanqianhw9;
  */
 
 public class GetURLS {
-    static final String CURGEO = "http://ip-api.com/json";
     static final String OTHERGEO = "http://csci571search-nodejs.us-west-2.elasticbeanstalk.com/curLoc?location=Location&loc=";
     static final String RES = "http://csci571search-nodejs.us-west-2.elasticbeanstalk.com/results?";
     static final String YELPMATCH = "http://csci571search-nodejs.us-west-2.elasticbeanstalk.com/getYelpMatches?";

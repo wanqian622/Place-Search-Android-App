@@ -16,6 +16,7 @@ public class SearchResults {
 
 
 
+
     public SearchResults(String url, String placeName, String placeAddress,String place_id, Double lat, Double lng){
         imgUri = url;
         name = placeName;
