@@ -14,29 +14,38 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
+
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+
 /**
- * Created by anwanqi on 4/13/18.
+ * Created by anwanqi on 4/21/18.
  */
 
-public class SearchResultsListAdapter extends RecyclerView.Adapter<SearchResultsListAdapter.ViewHolder> {
-    private List<SearchResults> resultList;
+public class FavoriteListAdapter extends RecyclerView.Adapter<FavoriteListAdapter.ViewHolder> {
+    private List<SearchResults> favoriteList;
     private Context context;
+    private static RecyclerViewClickListener mCallback;
+//    private RecyclerView mRecyclerView;
 
 
-    public SearchResultsListAdapter(List<SearchResults> res, final Context context){
-        resultList = res;
+    public FavoriteListAdapter(List<SearchResults> res, final Context context,RecyclerViewClickListener itemListener){
+        favoriteList = res;
         this.context = context;
+        mCallback = itemListener;
     }
 
+//    @Override
+//    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+//        super.onAttachedToRecyclerView(recyclerView);
+//
+//        mRecyclerView = recyclerView;
+//    }
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView name;
         public TextView address;
@@ -56,15 +65,10 @@ public class SearchResultsListAdapter extends RecyclerView.Adapter<SearchResults
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final SearchResults res = resultList.get(position);
+        final SearchResults res = favoriteList.get(position);
         holder.name.setText(res.getName());
         holder.address.setText(res.getAddress());
-
-        if(SharedPreferenceManager.getInstance(context.getApplicationContext()).isFavourite(res.getPlace_id())){
-            holder.favView.setImageResource(R.drawable.heart_fill_red);
-        } else{
-            holder.favView.setImageResource(R.drawable.heart_outline_black);
-        }
+        holder.favView.setImageResource(R.drawable.heart_fill_red);
 
         if(res.getImgUri() != null){
             final String imageUrl = res.getImgUri();
@@ -89,18 +93,11 @@ public class SearchResultsListAdapter extends RecyclerView.Adapter<SearchResults
             public void onClick(View v) {
 
                 String keyId = res.getPlace_id();
-                if(SharedPreferenceManager.getInstance(context.getApplicationContext()).isFavourite(keyId)){
-                    holder.favView.setImageResource(R.drawable.heart_outline_black);
-                    SharedPreferenceManager.getInstance(context.getApplicationContext()).removeFavourite(keyId);
-                } else{
-                    holder.favView.setImageResource(R.drawable.heart_fill_red);
-                    SearchResults newOne = new SearchResults(res.getImgUri(),res.getName(),res.getAddress(),res.getPlace_id(), res.getPlace_lat(),res.getPlace_lng());
-                    Gson gson = new Gson();
-                    String jsonInString = gson.toJson(newOne);
-                    SharedPreferenceManager.getInstance(context.getApplicationContext()).setFavourite(res.getPlace_id(),jsonInString);
-                }
+                SharedPreferenceManager.getInstance(context.getApplicationContext()).removeFavourite(keyId);
+                mCallback.recyclerViewListClicked();
             }
         });
+
 
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,20 +111,16 @@ public class SearchResultsListAdapter extends RecyclerView.Adapter<SearchResults
                 bundle.putString("PlaceName",placeName);
                 bundle.putDouble("placeLat",placeLat);
                 bundle.putDouble("placeLng",placeLng);
-                bundle.putString("placeImgUrl",res.getImgUri());
-                bundle.putString("placeAddress",res.getAddress());
                 Intent intent = new Intent(context, DetailsActivity.class);
                 intent.putExtras(bundle);
                 context.startActivity(intent);
             }
         });
-
-
     }
 
     @Override
-    public SearchResultsListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                          int viewType) {
+    public FavoriteListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+                                                                  int viewType) {
         LayoutInflater inflater = LayoutInflater.from(
                 parent.getContext());
         View v = inflater.inflate(R.layout.result_list_item, parent, false);
@@ -137,7 +130,7 @@ public class SearchResultsListAdapter extends RecyclerView.Adapter<SearchResults
 
     @Override
     public int getItemCount() {
-        return resultList.size();
+        return favoriteList.size();
     }
 
     public static Bitmap getBitmapFromURL(String imageUrl) {
@@ -160,5 +153,9 @@ public class SearchResultsListAdapter extends RecyclerView.Adapter<SearchResults
         return bitmap;
     }
 
+
+    public interface RecyclerViewClickListener{
+        public void recyclerViewListClicked();
+    }
 
 }

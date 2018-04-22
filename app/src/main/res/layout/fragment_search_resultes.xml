@@ -49,6 +49,7 @@
                 android:layout_height="48dp"
                 android:layout_weight="1"
                 android:text=" PREVIOUS"
+                android:visibility="gone"
                 android:textColor="@android:color/black"
                 android:id="@+id/previous" />
 
@@ -58,6 +59,7 @@
                 android:layout_height="48dp"
                 android:layout_weight="1"
                 android:text="NEXT"
+                android:visibility="gone"
                 android:textColor="@android:color/black"
                 android:id="@+id/next" />
         </LinearLayout>

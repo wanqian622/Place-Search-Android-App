@@ -25,14 +25,13 @@
             android:elevation="6dp"
             app:layout_scrollFlags="scroll|enterAlways"
             app:navigationIcon="?attr/homeAsUpIndicator"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
             >
 
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="160dp"
-                android:src="@mipmap/ic_screen_share_white_24dp"
+                android:src="@drawable/share"
                 android:id="@+id/share_img"
                 />
 
@@ -40,7 +39,6 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="20dp"
-                android:src="@mipmap/ic_favorite_white_24dp"
                 android:id="@+id/favorite_img"
                 />
 

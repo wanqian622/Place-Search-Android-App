@@ -24,9 +24,8 @@
             android:background="?attr/colorPrimary"
             android:elevation="6dp"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="Places Search">
-
+            <!--app:popupTheme="@style/AppTheme.PopupOverlay"-->
 
         </android.support.v7.widget.Toolbar>
 

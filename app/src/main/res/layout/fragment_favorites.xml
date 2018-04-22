@@ -4,10 +4,38 @@
     android:layout_height="match_parent"
     tools:context="com.example.wanqianhw9.FavoritesFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- This recycler view shows Results data -->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/favorite_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
+
+        <ProgressBar
+            android:id="@+id/favoriteProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
+            android:indeterminateTint="@android:color/black"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/favoriteErrorMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="200dp"
+            android:text="No Records have been found"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:visibility="gone" />
+
+    </RelativeLayout>
 
 </FrameLayout>

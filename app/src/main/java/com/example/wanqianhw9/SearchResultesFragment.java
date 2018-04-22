@@ -2,6 +2,7 @@ package com.example.wanqianhw9;
 
 
 
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,8 +27,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-
+import java.util.Map;
 
 
 /**
@@ -41,7 +42,7 @@ public class SearchResultesFragment extends Fragment {
     private TextView mErr;
     private  List<SearchResults> results;
     private int count;
-    private String pageTokens;
+    private List<String> pageTokens;
     private Button mPreviousButton;
     private Button mNextButton;
 
@@ -67,11 +68,45 @@ public class SearchResultesFragment extends Fragment {
         recyclerView.setLayoutManager(mLayoutManager);
         results = new ArrayList<SearchResults>();
         count = 1;
-        pageTokens = "";
+        pageTokens = new ArrayList<String>();
         mPreviousButton = view.findViewById(R.id.previous);
         mNextButton = view.findViewById(R.id.next);
         mPreviousButton.setEnabled(false);
         mNextButton.setEnabled(false);
+
+        mNextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                count += 1;
+                if (count == 2) {
+                    if (results.size() > 20 && results.size() <= 40) {
+                        setUpResults(results.subList(20, results.size()));
+                    } else if (results.size() > 40) {
+                        setUpResults(results.subList(20, 40));
+                    } else {
+                        askForNextPage();
+                    }
+                } else if (count == 3) {
+                    if (results.size() > 40) {
+                        setUpResults(results.subList(40, results.size()));
+                    } else {
+                        askForNextPage();
+                    }
+                }
+            }
+        });
+
+        mPreviousButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                count -= 1;
+                if (count == 1) {
+                    setUpResults(results.subList(0, 20));
+                } else if (count == 2) {
+                    setUpResults(results.subList(20, 40));
+                }
+            }
+        });
 
         String getLocation = getActivity().getIntent().getExtras().getString("otherLoc");
         if(getLocation.equals("here")){
@@ -79,9 +114,6 @@ public class SearchResultesFragment extends Fragment {
         } else{
             requestForOther(getLocation);
         }
-
-
-
 
 
         return view;
@@ -97,35 +129,6 @@ public class SearchResultesFragment extends Fragment {
         geoLoc.add(lng);
         requestForResults();
 
-//        StringRequest stringRequest = new StringRequest(Request.Method.GET, GetURLS.CURGEO, new Response.Listener<String>() {
-//            @Override
-//            public void onResponse(String response) {
-//                JSONObject jObj = null;
-//                try {
-//                    jObj = new JSONObject(response);
-//                    if(jObj.getString("status").equals("success")){
-//                        geoLoc.add(jObj.getDouble("lat"));
-//                        geoLoc.add(jObj.getDouble("lon"));
-//                        requestForResults();
-//
-//                    } else{
-//                        mErr.setVisibility(View.VISIBLE);
-//                    }
-//
-//                } catch (JSONException e) {
-//                    mErr.setVisibility(View.VISIBLE);
-//                    e.printStackTrace();
-//                }
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                mErr.setVisibility(View.VISIBLE);
-//            }
-//        }) {
-//
-//        };
-//        AppController.getInstance().addToRequestQueue(stringRequest, "Here");
     }
 
 
@@ -197,21 +200,16 @@ public class SearchResultesFragment extends Fragment {
                             SearchResults res = new SearchResults(placeUrl,placeName,placeAddress,placeId,placeLat,placeLng);
                             results.add(res);
                         }
-                        setUpResults(results.subList(0,20));
-                        mPreviousButton.setEnabled(false);
+                        setUpResults(results);
+                        mPreviousButton.setVisibility(View.VISIBLE);
+                        mNextButton.setVisibility(View.VISIBLE);
                         if(jObj.has("nextPageToken")){
-                            pageTokens = jObj.getString("nextPageToken");
-                            count = count + 1;  // 2
+                            pageTokens.add(jObj.getString("nextPageToken"));
                             mNextButton.setEnabled(true);
-                            mNextButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    askForNextPage(pageTokens);
-                                }
-                            });
-
+                            mNextButton.setTextColor(Color.BLACK);
                         } else{
                             mNextButton.setEnabled(false);
+                            mNextButton.setTextColor(Color.GRAY);
                         }
                     } else{
                         setUpResults(new ArrayList<SearchResults>());
@@ -236,8 +234,15 @@ public class SearchResultesFragment extends Fragment {
         AppController.getInstance().addToRequestQueue(stringRequest, "results1");
     }
 
-    private void askForNextPage(final String pageToken){
-        String queryUrl = GetURLS.RES + "pageToken=" + pageToken;
+    private void askForNextPage(){
+        String queryUrl = GetURLS.RES + "pageToken=";
+        mNextButton.setEnabled(false);
+        if(count == 2){
+            queryUrl += pageTokens.get(0);
+        } else{
+            queryUrl += pageTokens.get(1);
+        }
+
         StringRequest stringRequest = new StringRequest(Request.Method.GET, queryUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -258,36 +263,18 @@ public class SearchResultesFragment extends Fragment {
                                 results.add(res);
                             }
                             if(count == 2){
-                                setUpResults(results.subList(20,40));
+                                setUpResults(results.subList(20,results.size()));
                             } else{
                                 setUpResults(results.subList(40,results.size()));
                             }
-                            mPreviousButton.setEnabled(true);
-                            mPreviousButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    count = count - 1;  // 1  2
-                                    if(count == 1){
-                                        setUpResults(results.subList(0,20));
-                                        mPreviousButton.setEnabled(false);
-                                    } else{
-                                        setUpResults(results.subList(20,40));
-                                    }
 
-                                }
-                            });
-                            if(jObj.has("nextPageToken") &&  count < 3){
-                                count = count + 1;  // 3
-                                pageTokens = jObj.getString("nextPageToken");
+                            if(jObj.has("nextPageToken")){
+                                pageTokens.add(jObj.getString("nextPageToken"));
                                 mNextButton.setEnabled(true);
-                                mNextButton.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        askForNextPage(pageTokens);
-                                    }
-                                });
+                                mNextButton.setTextColor(Color.BLACK);
                             } else{
                                 mNextButton.setEnabled(false);
+                                mNextButton.setTextColor(Color.GRAY);
                             }
 
                     } else{
@@ -315,11 +302,63 @@ public class SearchResultesFragment extends Fragment {
     }
 
     private void setUpResults(List<SearchResults> result){
+        if(count == 1){
+            mPreviousButton.setEnabled(false);
+            mPreviousButton.setTextColor(Color.GRAY);
+            if(pageTokens.size() > 0){
+                mNextButton.setEnabled(true);
+                mNextButton.setTextColor(Color.BLACK);
+            } else{
+                mNextButton.setEnabled(false);
+                mNextButton.setTextColor(Color.GRAY);
+            }
+        } else if(count == 2){
+            mPreviousButton.setEnabled(true);
+            mPreviousButton.setTextColor(Color.BLACK);
+            if(pageTokens.size() > 1){
+                mNextButton.setEnabled(true);
+                mNextButton.setTextColor(Color.BLACK);
+            } else{
+                mNextButton.setEnabled(false);
+                mNextButton.setTextColor(Color.GRAY);
+            }
+        } else{
+            mPreviousButton.setEnabled(true);
+            mPreviousButton.setTextColor(Color.BLACK);
+            mNextButton.setEnabled(false);
+            mNextButton.setTextColor(Color.GRAY);
+        }
 
         mAdapter = new SearchResultsListAdapter(result,getContext());
-
         recyclerView.setAdapter(mAdapter);
     }
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(count == 1){
+            if(results.size() < 20){
+                setUpResults(results.subList(0,results.size()));
+            } else{
+                setUpResults(results.subList(0,20));
+            }
+        } else if(count == 2){
+            if(results.size() < 40){
+                setUpResults(results.subList(20,results.size()));
+            } else{
+                setUpResults(results.subList(20,40));
+            }
+        } else{
+            setUpResults(results.subList(40,results.size()));
+        }
+    }
+
+
+
+
+
 
 
 }

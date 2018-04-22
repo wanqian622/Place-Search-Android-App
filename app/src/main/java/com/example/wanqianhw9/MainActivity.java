@@ -23,9 +23,10 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
     private int[] tabIcons = {
-            R.mipmap.ic_search_white_24dp,
-            R.mipmap.ic_favorite_white_24dp
+            R.drawable.search,
+            R.drawable.heart_fill_white
     };
 
     @Override

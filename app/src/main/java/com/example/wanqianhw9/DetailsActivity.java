@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -25,6 +27,7 @@ import com.google.android.gms.location.places.PlacePhotoMetadataResponse;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -43,8 +46,13 @@ public class DetailsActivity extends AppCompatActivity {
     private PhotosFragment mPhotosFragment;
     private final String APIKEY = "AIzaSyA0TgG8WO6h1YnWcc41_kkS_xFD7tFT1dw";
     private String placeId;
+    private double placeLat;
+    private double placeLng;
+    private String placeImg;
+    private String placeAddress;
     private Bundle bundle;
     private String getTitle;
+    private ImageView mFav;
     private GeoDataClient mGeoDataClient;
     private PlaceDetectionClient mPlaceDetectionClient;
     public static List<PlacePhotoMetadata> photosList;
@@ -58,10 +66,10 @@ public class DetailsActivity extends AppCompatActivity {
     private String bestId;
 
     private int[] tabIcons = {
-            R.mipmap.ic_info_outline_white_24dp,
-            R.mipmap.ic_insert_photo_white_24dp,
-            R.mipmap.ic_directions_white_24dp,
-            R.mipmap.ic_rate_review_white_24dp
+            R.drawable.info_outline,
+            R.drawable.photos,
+            R.drawable.maps,
+            R.drawable.review
     };
 
 
@@ -79,8 +87,13 @@ public class DetailsActivity extends AppCompatActivity {
         photosList = new ArrayList<PlacePhotoMetadata>();
         googleReviews = new ArrayList<Reviews>();
         yelpReviews = new ArrayList<Reviews>();
+        mFav= (ImageView) findViewById(R.id.favorite_img);
         getTitle = intent.getExtras().getString("PlaceName");
         placeId = intent.getExtras().getString("PlaceID");
+        placeLat = intent.getExtras().getDouble("placeLat");
+        placeLng = intent.getExtras().getDouble("placeLng");
+        placeAddress= intent.getExtras().getString("placeAddress");
+        placeImg= intent.getExtras().getString("placeImgUrl");
         bundle = new Bundle();
         zipCode = "";
         country = "";
@@ -88,6 +101,27 @@ public class DetailsActivity extends AppCompatActivity {
         state = "";
         getAddress = "";
         bestId = "";
+        if(SharedPreferenceManager.getInstance(getApplicationContext()).isFavourite(placeId)){
+            mFav.setImageResource(R.drawable.heart_fill_white);
+        } else{
+            mFav.setImageResource(R.drawable.heart_outline_black);
+        }
+
+        mFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(SharedPreferenceManager.getInstance(getApplicationContext()).isFavourite(placeId)){
+                    mFav.setImageResource(R.drawable.heart_outline_black);
+                    SharedPreferenceManager.getInstance(getApplicationContext()).removeFavourite(placeId);
+                } else{
+                    mFav.setImageResource(R.drawable.heart_fill_white);
+                    SearchResults newOne = new SearchResults(placeImg,getTitle,placeAddress,placeId,placeLat,placeLng);
+                    Gson gson = new Gson();
+                    String jsonInString = gson.toJson(newOne);
+                    SharedPreferenceManager.getInstance(getApplicationContext()).setFavourite(placeId,jsonInString);
+                }
+            }
+        });
         requestForDetails();
     }
 
@@ -313,12 +347,12 @@ public class DetailsActivity extends AppCompatActivity {
                     photosList.add(photoMetadata.freeze());
                     //photoMetadataBuffer.get(0).freeze()
                 }
+                photoMetadataBuffer.release();
                 toolbar = (Toolbar) findViewById(R.id.toolbarDetails);
                 setSupportActionBar(toolbar);
                 getSupportActionBar().setTitle(getTitle);
 
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
                 viewPager = (ViewPager) findViewById(R.id.containerDetails);
                 setupViewPager(viewPager);
@@ -326,7 +360,6 @@ public class DetailsActivity extends AppCompatActivity {
                 tabLayout = (TabLayout) findViewById(R.id.tabsDetails);
                 tabLayout.setupWithViewPager(viewPager);
                 setupTabIcons();
-                photoMetadataBuffer.release();
 
             }
         });
