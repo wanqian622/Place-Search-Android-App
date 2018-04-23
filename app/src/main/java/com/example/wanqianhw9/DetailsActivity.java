@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -142,16 +143,20 @@ public class DetailsActivity extends AppCompatActivity {
         mFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String toastText = getTitle;
                 if(SharedPreferenceManager.getInstance(getApplicationContext()).isFavourite(placeId)){
-                    mFav.setImageResource(R.drawable.heart_outline_black);
+                    toastText += " was removed from favorites";
+                    mFav.setImageResource(R.drawable.heart_outline_white);
                     SharedPreferenceManager.getInstance(getApplicationContext()).removeFavourite(placeId);
                 } else{
+                    toastText += " was added to favorites";
                     mFav.setImageResource(R.drawable.heart_fill_white);
                     SearchResults newOne = new SearchResults(placeImg,getTitle,placeAddress,placeId,placeLat,placeLng);
                     Gson gson = new Gson();
                     String jsonInString = gson.toJson(newOne);
                     SharedPreferenceManager.getInstance(getApplicationContext()).setFavourite(placeId,jsonInString);
                 }
+                Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_LONG).show();
             }
         });
         requestForDetails();

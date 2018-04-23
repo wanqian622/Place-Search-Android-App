@@ -7,7 +7,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
         <TextView
             android:layout_width="match_parent"
@@ -20,9 +21,8 @@
             android:textSize="15sp" />
 
         <EditText
-            android:layout_width="match_parent"
+            android:layout_width="370dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10px"
             android:id="@+id/editTextGeolocation"
             android:layout_gravity="center_horizontal"
             android:hint="Type in the Location"
@@ -39,17 +39,13 @@
 
         <Spinner
             android:id="@+id/travel_model_spinner"
-            android:layout_width="fill_parent"
+            android:layout_width="380dp"
             android:layout_height="wrap_content" />
 
         <com.google.android.gms.maps.MapView
             android:id="@+id/map_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
-
-
-
 
     </LinearLayout>
 

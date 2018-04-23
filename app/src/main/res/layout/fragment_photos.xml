@@ -9,6 +9,8 @@
         android:id="@+id/photos_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:scrollbars="vertical" />
 
     <ProgressBar
@@ -22,11 +24,10 @@
 
     <TextView
         android:id="@+id/photosErrorMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="200dp"
-        android:text="No Records have been found"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="No photos"
         android:textColor="@android:color/black"
         android:textSize="20sp"
         android:visibility="gone" />

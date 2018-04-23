@@ -15,7 +15,9 @@
             android:id="@+id/result_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="60dp"/>
 
         <ProgressBar
             android:id="@+id/resultsProgressBar"
@@ -28,11 +30,10 @@
 
         <TextView
             android:id="@+id/resultsErrorMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="200dp"
-            android:text="No Records have been found"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="No results"
             android:textColor="@android:color/black"
             android:textSize="20sp"
             android:visibility="gone" />
@@ -49,7 +50,7 @@
                 android:layout_height="48dp"
                 android:layout_weight="1"
                 android:text=" PREVIOUS"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:textColor="@android:color/black"
                 android:id="@+id/previous" />
 
@@ -59,7 +60,7 @@
                 android:layout_height="48dp"
                 android:layout_weight="1"
                 android:text="NEXT"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:textColor="@android:color/black"
                 android:id="@+id/next" />
         </LinearLayout>

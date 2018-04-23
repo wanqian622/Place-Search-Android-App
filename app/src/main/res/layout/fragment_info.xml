@@ -3,22 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.wanqianhw9.InfoFragment">
+
+    <TextView
+        android:id="@+id/infoErrorMessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="No info"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="10dp">
-
-        <TextView
-            android:id="@+id/infoErrorMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="200dp"
-            android:text="No Records have been found"
-            android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -136,7 +136,7 @@
                 android:layout_height="100px"
                 android:scaleX=".5"
                 android:scaleY=".5"
-                android:transformPivotX="0dp"
+                android:transformPivotX="20dp"
                 android:transformPivotY="0dp"
                 android:isIndicator="true"
                 android:max="5" />
@@ -159,6 +159,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="10dp"
+            android:layout_marginTop="-30dp"
             android:id="@+id/info_title_googlePage"
             android:visibility="gone"
             >

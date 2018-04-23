@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -87,18 +88,21 @@ public class SearchResultsListAdapter extends RecyclerView.Adapter<SearchResults
         holder.favView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String toastText = res.getName();
                 String keyId = res.getPlace_id();
                 if(SharedPreferenceManager.getInstance(context.getApplicationContext()).isFavourite(keyId)){
+                    toastText += " was removed from favorites";
                     holder.favView.setImageResource(R.drawable.heart_outline_black);
                     SharedPreferenceManager.getInstance(context.getApplicationContext()).removeFavourite(keyId);
                 } else{
+                    toastText += " was added to favorites";
                     holder.favView.setImageResource(R.drawable.heart_fill_red);
                     SearchResults newOne = new SearchResults(res.getImgUri(),res.getName(),res.getAddress(),res.getPlace_id(), res.getPlace_lat(),res.getPlace_lng());
                     Gson gson = new Gson();
                     String jsonInString = gson.toJson(newOne);
                     SharedPreferenceManager.getInstance(context.getApplicationContext()).setFavourite(res.getPlace_id(),jsonInString);
                 }
+                Toast.makeText(context, toastText, Toast.LENGTH_LONG).show();
             }
         });
 

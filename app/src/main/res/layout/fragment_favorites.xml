@@ -14,7 +14,9 @@
             android:id="@+id/favorite_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"/>
 
         <ProgressBar
             android:id="@+id/favoriteProgressBar"
@@ -25,17 +27,16 @@
             android:indeterminateTint="@android:color/black"
             android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/favoriteErrorMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="200dp"
-            android:text="No Records have been found"
-            android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:visibility="gone" />
-
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/favoriteErrorMessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="No favorites"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:visibility="gone" />
 
 </FrameLayout>

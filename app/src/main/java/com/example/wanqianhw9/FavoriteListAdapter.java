@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.widget.Toast;
 
 
 import java.io.IOException;
@@ -91,7 +91,8 @@ public class FavoriteListAdapter extends RecyclerView.Adapter<FavoriteListAdapte
         holder.favView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String toastText = res.getName() + " was removed from favorites";
+                Toast.makeText(context, toastText, Toast.LENGTH_LONG).show();
                 String keyId = res.getPlace_id();
                 SharedPreferenceManager.getInstance(context.getApplicationContext()).removeFavourite(keyId);
                 mCallback.recyclerViewListClicked();
