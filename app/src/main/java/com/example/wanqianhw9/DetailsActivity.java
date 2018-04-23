@@ -30,6 +30,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
@@ -53,6 +54,7 @@ public class DetailsActivity extends AppCompatActivity {
     private Bundle bundle;
     private String getTitle;
     private ImageView mFav;
+    private ImageView mShareTwitter;
     private GeoDataClient mGeoDataClient;
     private PlaceDetectionClient mPlaceDetectionClient;
     public static List<PlacePhotoMetadata> photosList;
@@ -64,6 +66,9 @@ public class DetailsActivity extends AppCompatActivity {
     private String state;
     private String getAddress;
     private String bestId;
+    private String getGooglePage;
+    private String getWebsite;
+
 
     private int[] tabIcons = {
             R.drawable.info_outline,
@@ -88,6 +93,7 @@ public class DetailsActivity extends AppCompatActivity {
         googleReviews = new ArrayList<Reviews>();
         yelpReviews = new ArrayList<Reviews>();
         mFav= (ImageView) findViewById(R.id.favorite_img);
+        mShareTwitter = (ImageView) findViewById(R.id.share_img);
         getTitle = intent.getExtras().getString("PlaceName");
         placeId = intent.getExtras().getString("PlaceID");
         placeLat = intent.getExtras().getDouble("placeLat");
@@ -95,6 +101,8 @@ public class DetailsActivity extends AppCompatActivity {
         placeAddress= intent.getExtras().getString("placeAddress");
         placeImg= intent.getExtras().getString("placeImgUrl");
         bundle = new Bundle();
+        getWebsite = "";
+        getGooglePage = "";
         zipCode = "";
         country = "";
         city= "";
@@ -106,6 +114,30 @@ public class DetailsActivity extends AppCompatActivity {
         } else{
             mFav.setImageResource(R.drawable.heart_outline_black);
         }
+
+        mShareTwitter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                String twit_url = "";
+                String twitterMessage = "Check out " + getTitle;
+                try {
+                    twitterMessage += " located at " + placeAddress;
+                    twit_url = getWebsite;
+                    if (twit_url.equals("")) {
+                        twit_url = getGooglePage;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                twitterMessage += ". Website: ";
+                String twitterURL = GetURLS.TWITTER + "?text=" + Uri.encode(twitterMessage) + "&url=" + Uri.encode(twit_url) + "&hashtags=TravelAndEntertainmentSearch";
+                intent.setData(Uri.parse(twitterURL));
+                startActivity(intent);
+            }
+        });
 
         mFav.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,7 +240,7 @@ public class DetailsActivity extends AppCompatActivity {
                         }
 
                         try{
-                            String getWebsite = data.getString("website");
+                            getWebsite = data.getString("website");
                             if(getWebsite != null && getWebsite != ""){
                                 bundle.putString("website",getWebsite);
                             }
@@ -220,7 +252,7 @@ public class DetailsActivity extends AppCompatActivity {
 
                         try{
 
-                            String getGooglePage = data.getString("url");
+                            getGooglePage = data.getString("url");
                             if(getGooglePage != null && getGooglePage != ""){
                                 bundle.putString("googlePage",getGooglePage);
                             }
