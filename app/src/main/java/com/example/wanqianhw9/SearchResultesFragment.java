@@ -140,12 +140,12 @@ public class SearchResultesFragment extends Fragment {
             @Override
             public void onResponse(String response) {
                 JSONObject jObj = null;
+                Log.d("gwRes",response);
                 try {
                     jObj = new JSONObject(response);
-                    JSONObject data = jObj.getJSONObject("data");
-                    if(data.getInt("error") == 0){
-                        geoLoc.add(data.getDouble("lat"));
-                        geoLoc.add(data.getDouble("lng"));
+                    if(jObj.getInt("error") == 0){
+                        geoLoc.add(jObj.getDouble("lat"));
+                        geoLoc.add(jObj.getDouble("lng"));
                         requestForResults();
 
                     } else{

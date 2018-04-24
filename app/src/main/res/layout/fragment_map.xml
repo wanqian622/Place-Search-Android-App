@@ -20,13 +20,14 @@
             android:textColor="#868686"
             android:textSize="15sp" />
 
-        <EditText
-            android:layout_width="370dp"
+        <AutoCompleteTextView
+            android:id="@+id/map_search_place"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editTextGeolocation"
-            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
             android:hint="Type in the Location"
-            android:inputType="text"/>
+            >
+        </AutoCompleteTextView>
 
         <TextView
             android:layout_width="match_parent"

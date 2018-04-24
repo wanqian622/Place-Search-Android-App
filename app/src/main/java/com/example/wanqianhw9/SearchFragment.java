@@ -4,6 +4,7 @@ package com.example.wanqianhw9;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.InputType;
@@ -22,9 +23,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompletePredictionBufferResponse;
+import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
@@ -48,6 +55,7 @@ public class SearchFragment extends Fragment {
     private LocationTracker mLocationTracker;
     private double latitude;
     private double longitude;
+//    private GeoDataClient geoDataClient;
 //    private String otherLoc;
 
 
@@ -78,25 +86,6 @@ public class SearchFragment extends Fragment {
         latitude = mLocationTracker.getLatitude();
         longitude = mLocationTracker.getLongitude();
         Log.d("latt",new Double(latitude).toString());
-
-
-//        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-//                getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-//
-//        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(Place place) {
-//                // TODO: Get info about the selected place.
-//                otherLoc = place.getName().toString();
-//                Log.i(TAG, "Place: " + place.getName());
-//            }
-//
-//            @Override
-//            public void onError(Status status) {
-//                // TODO: Handle the error.
-//                Log.i(TAG, "An error occurred: " + status);
-//            }
-//        });
 
 
         mSearchButton.setOnClickListener(new View.OnClickListener() {

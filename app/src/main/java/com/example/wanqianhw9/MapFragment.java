@@ -10,9 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 import android.widget.Spinner;
 
+import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.GeoDataClient;
+import com.google.android.gms.location.places.PlaceDetectionClient;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -20,7 +24,19 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.DirectionsApi;
+import com.google.maps.GeoApiContext;
+import com.google.maps.android.PolyUtil;
+import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.TravelMode;
+
+import org.joda.time.DateTime;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -28,9 +44,18 @@ import com.google.android.gms.maps.model.MarkerOptions;
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback {
     private MapView mMapView;
-    private EditText mGeolocationEditText;
     private Spinner spinner;
     private View mView;
+    private String APIKET = "AIzaSyA0TgG8WO6h1YnWcc41_kkS_xFD7tFT1dw";
+    private AutoCompleteTextView searchPlace;
+    protected GeoDataClient mGeoDataClient;
+    protected PlaceDetectionClient mPlaceDetectionClient;
+    private PlaceAutocompleteAdapter mAdapter;
+    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
+            new LatLng(25, -73), new LatLng(49, -125));
+    private String origin;
+    private String originTitle;
+    private String defaultValue;
 
 
     public MapFragment() {
@@ -42,9 +67,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_map, container, false);
-        mGeolocationEditText = (EditText) mView.findViewById(R.id.editTextGeolocation);
+        origin = "";
+        originTitle = "";
+        mGeoDataClient = Places.getGeoDataClient(getActivity(), null);
+        mPlaceDetectionClient = Places.getPlaceDetectionClient(getActivity(), null);
+        searchPlace = (AutoCompleteTextView) mView.findViewById(R.id.map_search_place);
+        mAdapter = new PlaceAutocompleteAdapter(getActivity(),mGeoDataClient,LAT_LNG_BOUNDS,null);
+        searchPlace.setAdapter(mAdapter);
+
         spinner = (Spinner) mView.findViewById(R.id.travel_model_spinner);
-        String defaultValue = "Driving";
+        defaultValue = "Driving";
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.travel_mode_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -104,30 +136,67 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap GoogleMap) {
         MapsInitializer.initialize(getContext());
-        double lat = getActivity().getIntent().getExtras().getDouble("placeLat");
-        double lng = getActivity().getIntent().getExtras().getDouble("placeLng");
+        final GoogleMap googleMap = GoogleMap;
+        final double lat = getActivity().getIntent().getExtras().getDouble("placeLat");
+        final double lng = getActivity().getIntent().getExtras().getDouble("placeLng");
+        String name = getActivity().getIntent().getExtras().getString("PlaceName");
+        final String des = getActivity().getIntent().getExtras().getString("PlaceName") + ", " + getActivity().getIntent().getExtras().getString("PlaceName");
 
-        String address = getActivity().getIntent().getExtras().getString("PlaceName");
 
-        // Create marker on google map
+
+
+        searchPlace.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final AutocompletePrediction item = mAdapter.getItem(position);
+                origin = item.getFullText(null).toString();
+                originTitle = item.getPrimaryText(null).toString();
+
+                DateTime now = new DateTime();
+                try{
+                    final DirectionsResult result = DirectionsApi.newRequest(getGeoContext()).mode(TravelMode.DRIVING).origin(origin).destination(des).departureTime(now).await();
+                    googleMap.addMarker(new MarkerOptions().position(new LatLng(result.routes[0].legs[0].startLocation.lat,result.routes[0].legs[0].startLocation.lng)).title(originTitle));
+                    //googleMap.addMarker(new MarkerOptions().position(new LatLng(result.routes[0].legs[0].endLocation.lat,result.routes[0].legs[0].endLocation.lng)).title(originTitle));
+                    addPolyline(result,googleMap);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+
+            }
+        });
+
+//         Create marker on google map
         MarkerOptions marker = new MarkerOptions().position(
-                new LatLng(lat, lng)).title(address);
+                new LatLng(lat, lng)).title(name);
 
-        // Add marker to google map
+//         Add marker to google map
         googleMap.addMarker(marker);
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(lat, lng)).zoom(15).build();
 
-        // Animate the zoom process
+
         googleMap.animateCamera(CameraUpdateFactory
                 .newCameraPosition(cameraPosition));
 
 
     }
 
+    private GeoApiContext getGeoContext() {
+        GeoApiContext geoApiContext = new GeoApiContext();
+//        return geoApiContext.setQueryRateLimit(3).setApiKey(APIKET).setConnectTimeout(1, TimeUnit.SECONDS).setReadTimeout(1, TimeUnit.SECONDS).setWriteTimeout(1, TimeUnit.SECONDS);
+          return geoApiContext.setApiKey(APIKET);
+    }
+
+
+    private void addPolyline(DirectionsResult results, GoogleMap mMap) {
+        List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
+        mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
+    }
 
 
 }

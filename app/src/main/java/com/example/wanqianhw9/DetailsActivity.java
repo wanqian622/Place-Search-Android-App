@@ -341,11 +341,13 @@ public class DetailsActivity extends AppCompatActivity {
                         requestForYelp();
                     } else{
 //                        mErr.setVisibility(View.VISIBLE);
+                        requestForYelp();
                         Log.d("err","error");
                     }
 
                 } catch (Exception e) {
 //                    mErr.setVisibility(View.VISIBLE);
+                    requestForYelp();
                     e.printStackTrace();
                 }
             }
@@ -353,6 +355,7 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
 //                mErr.setVisibility(View.VISIBLE);
+                requestForYelp();
                 error.printStackTrace();
             }
         }) {
@@ -421,6 +424,7 @@ public class DetailsActivity extends AppCompatActivity {
 
                 } catch (Exception e) {
 //                    mErr.setVisibility(View.VISIBLE);
+                    getPhotoMetadata();
                     e.printStackTrace();
                 }
             }
@@ -428,6 +432,7 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
 //                mErr.setVisibility(View.VISIBLE);
+                getPhotoMetadata();
                 error.printStackTrace();
             }
         }) {
