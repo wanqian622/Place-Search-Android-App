@@ -391,7 +391,6 @@ public class DetailsActivity extends AppCompatActivity {
                 toolbar = (Toolbar) findViewById(R.id.toolbarDetails);
                 setSupportActionBar(toolbar);
                 getSupportActionBar().setTitle(getTitle);
-
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
                 viewPager = (ViewPager) findViewById(R.id.containerDetails);
@@ -400,6 +399,13 @@ public class DetailsActivity extends AppCompatActivity {
                 tabLayout = (TabLayout) findViewById(R.id.tabsDetails);
                 tabLayout.setupWithViewPager(viewPager);
                 setupTabIcons();
+
+                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                });
 
             }
         });
