@@ -1,7 +1,6 @@
 package com.example.wanqianhw9;
 
 
-
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,6 +9,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 
 import java.util.ArrayList;
@@ -21,9 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
-
-
-
+    private String[] tabTitles = {"SEARCH", "FAVORITE"};
     private int[] tabIcons = {
             R.drawable.search,
             R.drawable.heart_fill_white
@@ -50,9 +50,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupTabIcons() {
-        tabLayout.getTabAt(0).setIcon(tabIcons[0]);
-        tabLayout.getTabAt(1).setIcon(tabIcons[1]);
-
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            LinearLayout currTab = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+            TextView tab_text = (TextView) currTab.findViewById(R.id.tabContent);
+            tab_text.setText("  " + tabTitles[i]);
+            tab_text.setCompoundDrawablesWithIntrinsicBounds(tabIcons[i], 0, 0, 0);
+            tabLayout.getTabAt(i).setCustomView(tab_text);
+        }
     }
 
 

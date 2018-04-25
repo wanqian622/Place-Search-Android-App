@@ -1,5 +1,6 @@
 package com.example.wanqianhw9;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -12,8 +13,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -69,8 +73,9 @@ public class DetailsActivity extends AppCompatActivity {
     private String bestId;
     private String getGooglePage;
     private String getWebsite;
+    private ProgressDialog progressDialog;
 
-
+    private String[] tabTitles = {"INFO", "PHOTOS", "MAP", "REVIEWS"};
     private int[] tabIcons = {
             R.drawable.info_outline,
             R.drawable.photos,
@@ -110,6 +115,10 @@ public class DetailsActivity extends AppCompatActivity {
         state = "";
         getAddress = "";
         bestId = "";
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Fetching details");
+        progressDialog.setCancelable(true);
+        progressDialog.show();
         if(SharedPreferenceManager.getInstance(getApplicationContext()).isFavourite(placeId)){
             mFav.setImageResource(R.drawable.heart_fill_white);
         } else{
@@ -163,14 +172,17 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void setupTabIcons() {
-        tabLayout.getTabAt(0).setIcon(tabIcons[0]);
-        tabLayout.getTabAt(1).setIcon(tabIcons[1]);
-        tabLayout.getTabAt(2).setIcon(tabIcons[2]);
-        tabLayout.getTabAt(3).setIcon(tabIcons[3]);
-
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            LinearLayout currTab = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+            TextView tab_text = (TextView) currTab.findViewById(R.id.tabContent);
+            tab_text.setText("  " + tabTitles[i]);
+            tab_text.setCompoundDrawablesWithIntrinsicBounds(tabIcons[i], 0, 0, 0);
+            tabLayout.getTabAt(i).setCustomView(tab_text);
+        }
     }
 
     private void setupViewPager(ViewPager viewPager) {
+        progressDialog.dismiss();
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(mInfoFragment, "INFO");
         adapter.addFragment( mPhotosFragment, "PHOTOS");
@@ -426,6 +438,8 @@ public class DetailsActivity extends AppCompatActivity {
                     if(jObj.getString("bestId") != null && jObj.getInt("error") == 0){
                         bestId = jObj.getString("bestId");
                         requestForYelpReviews();
+                    } else{
+                        getPhotoMetadata();
                     }
 
                 } catch (Exception e) {

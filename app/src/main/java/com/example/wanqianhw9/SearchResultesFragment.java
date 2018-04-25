@@ -2,6 +2,7 @@ package com.example.wanqianhw9;
 
 
 
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -45,10 +46,7 @@ public class SearchResultesFragment extends Fragment {
     private List<String> pageTokens;
     private Button mPreviousButton;
     private Button mNextButton;
-
-
-
-
+    private ProgressDialog progressDialog;
 
     public SearchResultesFragment() {
         // Required empty public constructor
@@ -69,6 +67,10 @@ public class SearchResultesFragment extends Fragment {
         results = new ArrayList<SearchResults>();
         count = 1;
         pageTokens = new ArrayList<String>();
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Fetching results");
+        progressDialog.setCancelable(true);
+        progressDialog.show();
         mPreviousButton = view.findViewById(R.id.previous);
         mNextButton = view.findViewById(R.id.next);
         mPreviousButton.setEnabled(false);
@@ -80,16 +82,23 @@ public class SearchResultesFragment extends Fragment {
                 count += 1;
                 if (count == 2) {
                     if (results.size() > 20 && results.size() <= 40) {
+                        mErr.setVisibility(View.GONE);
                         setUpResults(results.subList(20, results.size()));
                     } else if (results.size() > 40) {
+                        mErr.setVisibility(View.GONE);
                         setUpResults(results.subList(20, 40));
                     } else {
+                        progressDialog.setMessage("Fetching next page");
+                        progressDialog.show();
                         askForNextPage();
                     }
                 } else if (count == 3) {
                     if (results.size() > 40) {
+                        mErr.setVisibility(View.GONE);
                         setUpResults(results.subList(40, results.size()));
                     } else {
+                        progressDialog.setMessage("Fetching next page");
+                        progressDialog.show();
                         askForNextPage();
                     }
                 }
@@ -125,8 +134,6 @@ public class SearchResultesFragment extends Fragment {
     private void requestForHere(){
         double lat = getActivity().getIntent().getExtras().getDouble("lat");
         double lng = getActivity().getIntent().getExtras().getDouble("lng");
-//        Log.d("getLat",new Double(lat).toString());
-//        Log.d("getLng",new Double(lng).toString());
         geoLoc.add(lat);
         geoLoc.add(lng);
         requestForResults();
@@ -203,6 +210,7 @@ public class SearchResultesFragment extends Fragment {
                             results.add(res);
                         }
                         setUpResults(results);
+                        progressDialog.dismiss();
                         mPreviousButton.setVisibility(View.VISIBLE);
                         mNextButton.setVisibility(View.VISIBLE);
                         if(jObj.has("nextPageToken")){
@@ -269,8 +277,10 @@ public class SearchResultesFragment extends Fragment {
                             } else{
                                 setUpResults(results.subList(40,results.size()));
                             }
+                            progressDialog.dismiss();
 
-                            if(jObj.has("nextPageToken")){
+
+                        if(jObj.has("nextPageToken")){
                                 pageTokens.add(jObj.getString("nextPageToken"));
                                 mNextButton.setEnabled(true);
                                 mNextButton.setTextColor(Color.BLACK);

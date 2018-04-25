@@ -176,6 +176,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 originTitle = item.getPrimaryText(null).toString();
                 originPlaceId = item.getPlaceId();
                 desPlaceId = getActivity().getIntent().getExtras().getString("PlaceID");
+                googleMap.clear();
+                firstSetMarker = false;
                 requestForMapDirections();
             }
         });

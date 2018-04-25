@@ -23,7 +23,6 @@
             android:layout_weight="1"
             android:background="?attr/colorPrimary"
             android:elevation="6dp"
-            app:layout_scrollFlags="scroll|enterAlways"
             app:navigationIcon="?attr/homeAsUpIndicator"
             >
 
@@ -54,7 +53,7 @@
             android:id="@+id/tabsDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabMode="fixed"
+            app:tabMode="scrollable"
             app:tabGravity="fill">
 
 

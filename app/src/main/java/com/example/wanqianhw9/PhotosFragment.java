@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.PlaceDetectionClient;
@@ -36,6 +37,7 @@ public class PhotosFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private TextView mErr;
 
 
 
@@ -50,11 +52,15 @@ public class PhotosFragment extends Fragment {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_photos, container, false);
         getPhotosList = DetailsActivity.photosList;
+        mErr = (TextView) mView.findViewById(R.id.photosErrorMessage);
         recyclerView = (RecyclerView) mView.findViewById(R.id.photos_recycler_view);
         recyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         setUpPhotos();
+        if(getPhotosList == null || getPhotosList.size() < 1){
+            mErr.setVisibility(View.VISIBLE);
+        }
         return mView;
     }
 
