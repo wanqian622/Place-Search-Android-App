@@ -1,8 +1,10 @@
 package com.example.wanqianhw9;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -17,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -92,23 +95,15 @@ public class ReviewsListAdapter extends RecyclerView.Adapter<ReviewsListAdapter.
             holder.profileView.setVisibility(View.GONE);
         }
 
-//        holder.layout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                String placeId = res.getPlace_id();
-//                String placeName = res.getName();
-//                Double placeLat = res.getPlace_lat();
-//                Double placeLng = res.getPlace_lng();
-//                Bundle bundle = new Bundle();
-//                bundle.putString("PlaceID", placeId);
-//                bundle.putString("PlaceName",placeName);
-//                bundle.putDouble("placeLat",placeLat);
-//                bundle.putDouble("placeLng",placeLng);
-//                Intent intent = new Intent(context, DetailsActivity.class);
-//                intent.putExtras(bundle);
-//                context.startActivity(intent);
-//            }
-//        });
+        holder.layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(res.getAuthorUrl()));
+                context.startActivity(browserIntent);
+            }
+        });
+
+
     }
     @Override
     public ReviewsListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,

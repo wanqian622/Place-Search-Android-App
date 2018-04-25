@@ -122,8 +122,10 @@ public class SearchFragment extends Fragment {
                 spinner.setSelection(0);
                 radioGroup.check(R.id.radio_here);
                 mSearchPlace.setEnabled(false);
-                mSearchPlace.setInputType(InputType.TYPE_NULL);
-                mSearchPlace.setFocusable(false);
+                //mSearchPlace.setInputType(InputType.TYPE_NULL);
+//                mSearchPlace.setFocusable(false);
+//                mKeywordEditText.setFocusable(true);
+                mSearchPlace.clearFocus();
             }
         });
 
@@ -154,6 +156,8 @@ public class SearchFragment extends Fragment {
                     } else {
                         mErrLoc.setVisibility(View.VISIBLE);
                     }
+                } else {
+                    mErrLoc.setVisibility(View.GONE);
                 }
 
                 mSearchPlace.addTextChangedListener(new TextWatcher() {
@@ -277,14 +281,14 @@ public class SearchFragment extends Fragment {
                 switch (checkedId) {
                     case R.id.radio_here:
                         mSearchPlace.setEnabled(false);
-                        mSearchPlace.setInputType(InputType.TYPE_NULL);
+                        //mSearchPlace.setInputType(InputType.TYPE_NULL);
                         mErrLoc.setVisibility(View.GONE);
 //                        mSearchPlace.setFocusable(false);
                         break;
                     case R.id.radio_other:
                         mSearchPlace.setEnabled(true);
-                        mSearchPlace.setInputType(InputType.TYPE_CLASS_TEXT);
-//                        mSearchPlace.setFocusable(true);
+                        //mSearchPlace.setInputType(InputType.TYPE_CLASS_TEXT);
+                        //mSearchPlace.setFocusable(true);
                         break;
                 }
             }

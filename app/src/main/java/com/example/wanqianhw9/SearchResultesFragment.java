@@ -75,6 +75,8 @@ public class SearchResultesFragment extends Fragment {
         mNextButton = view.findViewById(R.id.next);
         mPreviousButton.setEnabled(false);
         mNextButton.setEnabled(false);
+        mPreviousButton.setVisibility(View.GONE);
+        mNextButton.setVisibility(View.GONE);
 
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -224,11 +226,13 @@ public class SearchResultesFragment extends Fragment {
                     } else{
                         setUpResults(new ArrayList<SearchResults>());
                         mErr.setVisibility(View.VISIBLE);
+                        progressDialog.dismiss();
                     }
 
                 } catch (JSONException e) {
                     setUpResults(new ArrayList<SearchResults>());
                     mErr.setVisibility(View.VISIBLE);
+                    progressDialog.dismiss();
                     e.printStackTrace();
                 }
             }
@@ -237,6 +241,7 @@ public class SearchResultesFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 setUpResults(new ArrayList<SearchResults>());
                 mErr.setVisibility(View.VISIBLE);
+                progressDialog.dismiss();
             }
         }) {
 
@@ -292,11 +297,13 @@ public class SearchResultesFragment extends Fragment {
                     } else{
                         setUpResults(new ArrayList<SearchResults>());
                         mErr.setVisibility(View.VISIBLE);
+                        progressDialog.dismiss();
                     }
 
                 } catch (JSONException e) {
                     setUpResults(new ArrayList<SearchResults>());
                     mErr.setVisibility(View.VISIBLE);
+                    progressDialog.dismiss();
                     e.printStackTrace();
                 }
             }
@@ -305,6 +312,7 @@ public class SearchResultesFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 setUpResults(new ArrayList<SearchResults>());
                 mErr.setVisibility(View.VISIBLE);
+                progressDialog.dismiss();
             }
         }) {
 
