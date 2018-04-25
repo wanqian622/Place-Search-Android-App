@@ -13,10 +13,15 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Spinner;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.PlaceDetectionClient;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -34,6 +39,8 @@ import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.TravelMode;
 
 import org.joda.time.DateTime;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -46,16 +53,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private MapView mMapView;
     private Spinner spinner;
     private View mView;
-    private String APIKET = "AIzaSyA0TgG8WO6h1YnWcc41_kkS_xFD7tFT1dw";
+    private String APIKEY = "AIzaSyA0TgG8WO6h1YnWcc41_kkS_xFD7tFT1dw";
     private AutoCompleteTextView searchPlace;
     protected GeoDataClient mGeoDataClient;
     protected PlaceDetectionClient mPlaceDetectionClient;
     private PlaceAutocompleteAdapter mAdapter;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
-            new LatLng(25, -73), new LatLng(49, -125));
+            new LatLng(24.7433195, -124.7844079), new LatLng(49.3457868, -66.9513812));
     private String origin;
     private String originTitle;
     private String defaultValue;
+    private String originPlaceId;
+    private String desPlaceId;
+    private GoogleMap googleMap;
+    private double startLat;
+    private double startLng;
+    private double lat;
+    private double lng;
+    private boolean firstSetMarker;
+    private String name;
+    private LatLngBounds mapBound;
+
 
 
     public MapFragment() {
@@ -74,7 +92,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         searchPlace = (AutoCompleteTextView) mView.findViewById(R.id.map_search_place);
         mAdapter = new PlaceAutocompleteAdapter(getActivity(),mGeoDataClient,LAT_LNG_BOUNDS,null);
         searchPlace.setAdapter(mAdapter);
-
+        originPlaceId = "";
+        desPlaceId = "";
+        startLat = 0;
+        startLng = 0;
+        mapBound = LAT_LNG_BOUNDS;
+        lat = getActivity().getIntent().getExtras().getDouble("placeLat");
+        lng = getActivity().getIntent().getExtras().getDouble("placeLng");
+        name = getActivity().getIntent().getExtras().getString("PlaceName");
+        firstSetMarker = true;
         spinner = (Spinner) mView.findViewById(R.id.travel_model_spinner);
         defaultValue = "Driving";
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
@@ -83,18 +109,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         spinner.setAdapter(adapter);
         int spinnerPosition = adapter.getPosition(defaultValue);
         spinner.setSelection(spinnerPosition);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.v("item", (String) parent.getItemAtPosition(position));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
 
         return mView;
     }
@@ -103,7 +117,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mMapView = (MapView) mView.findViewById(R.id.map_view);
-        Log.d("map","getmap");
         if (mMapView != null) {
             mMapView.onCreate(null);
             mMapView.onResume();// needed to get the map to display immediately
@@ -138,38 +151,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap GoogleMap) {
         MapsInitializer.initialize(getContext());
-        final GoogleMap googleMap = GoogleMap;
-        final double lat = getActivity().getIntent().getExtras().getDouble("placeLat");
-        final double lng = getActivity().getIntent().getExtras().getDouble("placeLng");
-        String name = getActivity().getIntent().getExtras().getString("PlaceName");
-        final String des = getActivity().getIntent().getExtras().getString("PlaceName") + ", " + getActivity().getIntent().getExtras().getString("PlaceName");
+        googleMap = GoogleMap;
 
-
-
-
-        searchPlace.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final AutocompletePrediction item = mAdapter.getItem(position);
-                origin = item.getFullText(null).toString();
-                originTitle = item.getPrimaryText(null).toString();
-
-                DateTime now = new DateTime();
-                try{
-                    final DirectionsResult result = DirectionsApi.newRequest(getGeoContext()).mode(TravelMode.DRIVING).origin(origin).destination(des).departureTime(now).await();
-                    googleMap.addMarker(new MarkerOptions().position(new LatLng(result.routes[0].legs[0].startLocation.lat,result.routes[0].legs[0].startLocation.lng)).title(originTitle));
-                    //googleMap.addMarker(new MarkerOptions().position(new LatLng(result.routes[0].legs[0].endLocation.lat,result.routes[0].legs[0].endLocation.lng)).title(originTitle));
-                    addPolyline(result,googleMap);
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
-
-
-
-            }
-        });
-
-//         Create marker on google map
+        //         Create marker on google map
         MarkerOptions marker = new MarkerOptions().position(
                 new LatLng(lat, lng)).title(name);
 
@@ -184,19 +168,99 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .newCameraPosition(cameraPosition));
 
 
+        searchPlace.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final AutocompletePrediction item = mAdapter.getItem(position);
+                origin = item.getFullText(null).toString();
+                originTitle = item.getPrimaryText(null).toString();
+                originPlaceId = item.getPlaceId();
+                desPlaceId = getActivity().getIntent().getExtras().getString("PlaceID");
+                requestForMapDirections();
+            }
+        });
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.v("item", (String) parent.getItemAtPosition(position));
+                defaultValue = parent.getItemAtPosition(position).toString();
+                googleMap.clear();
+                requestForMapDirections();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
     }
 
-    private GeoApiContext getGeoContext() {
-        GeoApiContext geoApiContext = new GeoApiContext();
-//        return geoApiContext.setQueryRateLimit(3).setApiKey(APIKET).setConnectTimeout(1, TimeUnit.SECONDS).setReadTimeout(1, TimeUnit.SECONDS).setWriteTimeout(1, TimeUnit.SECONDS);
-          return geoApiContext.setApiKey(APIKET);
+    private void requestForMapDirections(){
+        String mapUrl = "https://maps.googleapis.com/maps/api/directions/json?origin=place_id:" + originPlaceId + "&destination=place_id:" + desPlaceId + "&mode=" + defaultValue.toLowerCase() +"&key=" + APIKEY;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, mapUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                JSONObject jObj = null;
+                try {
+                    jObj = new JSONObject(response);
+                    if(jObj.getString("status").equals("OK") && jObj.getJSONArray("routes") != null && jObj.getJSONArray("routes").length() > 0){
+                        JSONArray arr = jObj.getJSONArray("routes");
+                        JSONObject obj = arr.getJSONObject(0);
+                        JSONObject bound = obj.getJSONObject("bounds");
+                        JSONObject northeast = bound.getJSONObject("northeast");
+                        JSONObject southwest = bound.getJSONObject("southwest");
+                        mapBound = new LatLngBounds(new LatLng(southwest.getDouble("lat"), southwest.getDouble("lng")), new LatLng(northeast.getDouble("lat"), northeast.getDouble("lng")));
+
+                        JSONObject path = obj.getJSONObject("overview_polyline");
+                        JSONArray legs = obj.getJSONArray("legs");
+                        Log.d("getMap",legs.getJSONObject(0).toString());
+                        JSONObject endLoc = legs.getJSONObject(0).getJSONObject("end_location");
+                        JSONObject startLoc = legs.getJSONObject(0).getJSONObject("start_location");
+                        startLat = startLoc.getDouble("lat");
+                        startLng = startLoc.getDouble("lng");
+                        setMarker(path);
+                    }
+
+                } catch (Exception e) {
+//                    mErr.setVisibility(View.VISIBLE);
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+//                mErr.setVisibility(View.VISIBLE);
+                error.printStackTrace();
+            }
+        }) {
+
+        };
+        AppController.getInstance().addToRequestQueue(stringRequest, "mapDirections");
     }
 
+    private void setMarker(JSONObject path){
+        if(firstSetMarker){
+            googleMap.addMarker(new MarkerOptions().position(new LatLng(startLat,startLng)).title(originTitle));
+            firstSetMarker = false;
+        } else{
+            googleMap.addMarker(new MarkerOptions().position(new LatLng(startLat,startLng)).title(originTitle));
+            googleMap.addMarker(new MarkerOptions().position(new LatLng(lat,lng)).title(name));
+        }
+        try{
+            List<LatLng> decodedPath = PolyUtil.decode(path.getString("points"));
+            int padding = 0; // offset from edges of the map in pixels
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(mapBound, padding);
+            googleMap.animateCamera(cu);
 
-    private void addPolyline(DirectionsResult results, GoogleMap mMap) {
-        List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
-        mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
+            googleMap.addPolyline(new PolylineOptions().addAll(decodedPath));
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
+
 
 
 }

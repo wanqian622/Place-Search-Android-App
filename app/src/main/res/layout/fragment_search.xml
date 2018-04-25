@@ -102,23 +102,23 @@
             android:textColor="#ff0000"
             android:textSize="15sp" />
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:id="@+id/editTextLoc"
-            android:layout_gravity="center_horizontal"
-            android:hint="Type in the Location"
-            android:inputType="text"/>
-
-        <!--<AutoCompleteTextView-->
-            <!--android:id="@+id/search_place"-->
+        <!--<EditText-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginTop="12dp"-->
+            <!--android:layout_marginLeft="20dp"-->
+            <!--android:id="@+id/editTextLoc"-->
+            <!--android:layout_gravity="center_horizontal"-->
             <!--android:hint="Type in the Location"-->
-            <!--&gt;-->
-        <!--</AutoCompleteTextView>-->
+            <!--android:inputType="text"/>-->
+
+        <AutoCompleteTextView
+            android:id="@+id/search_place"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Type in the Location"
+            >
+        </AutoCompleteTextView>
         <!---->
 
         <!--<fragment-->

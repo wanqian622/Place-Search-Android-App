@@ -113,7 +113,7 @@ public class DetailsActivity extends AppCompatActivity {
         if(SharedPreferenceManager.getInstance(getApplicationContext()).isFavourite(placeId)){
             mFav.setImageResource(R.drawable.heart_fill_white);
         } else{
-            mFav.setImageResource(R.drawable.heart_outline_black);
+            mFav.setImageResource(R.drawable.heart_outline_white);
         }
 
         mShareTwitter.setOnClickListener(new View.OnClickListener() {

@@ -125,6 +125,8 @@ public class SearchResultesFragment extends Fragment {
     private void requestForHere(){
         double lat = getActivity().getIntent().getExtras().getDouble("lat");
         double lng = getActivity().getIntent().getExtras().getDouble("lng");
+//        Log.d("getLat",new Double(lat).toString());
+//        Log.d("getLng",new Double(lng).toString());
         geoLoc.add(lat);
         geoLoc.add(lng);
         requestForResults();
