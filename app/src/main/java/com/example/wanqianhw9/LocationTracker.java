@@ -31,15 +31,12 @@ public class LocationTracker implements LocationListener {
     private LocationManager locationManager;
 
 
+
     public LocationTracker(Activity context) {
         this.mContext = context;
     }
 
-    /**
-     * This function returns the location of current location. Either from GPS or from Network.
-     * GPS will be picked up with higher priority.
-     * @return current location, on emulator, default is 1600 Amphetheater Way, Montain View
-     */
+
 
     @Override
     public void onLocationChanged(Location location) {
@@ -57,6 +54,14 @@ public class LocationTracker implements LocationListener {
     public void onStatusChanged(String provider, int status, Bundle extras) {
     }
 
+
+
+
+    /**
+     * This function returns the location of current location. Either from GPS or from Network.
+     * GPS will be picked up with higher priority.
+     * @return current location, on emulator, default is 1600 Amphetheater Way, Montain View
+     */
     public Location getLocation() {
         try {
             locationManager = (LocationManager) mContext
@@ -66,17 +71,14 @@ public class LocationTracker implements LocationListener {
             mIsGPSEnabled = locationManager
                     .isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-
             // getting network status
             mIsNetworkEnabled = locationManager
                     .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-
-
-
             if (!mIsGPSEnabled && !mIsNetworkEnabled) {
                 return null;
             } else {
+                // First get location from Network Provider
                 checkLocationPermission();
                 if (mIsNetworkEnabled) {
                     locationManager.requestLocationUpdates(
@@ -92,7 +94,6 @@ public class LocationTracker implements LocationListener {
                         }
                     }
                 }
-
                 // if GPS Enabled get lat/long using GPS Services
                 if (mIsGPSEnabled) {
                     if (location == null) {
@@ -118,6 +119,7 @@ public class LocationTracker implements LocationListener {
 
         return location;
     }
+
 
     /**
      * Get latitude

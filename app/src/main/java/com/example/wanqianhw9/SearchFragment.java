@@ -151,6 +151,7 @@ public class SearchFragment extends Fragment {
 
                 if (radioGroup.getCheckedRadioButtonId() == R.id.radio_other) {
                     String str2 = otherLoc;
+                    Log.d("dddd",otherLoc);
                     if (str2.trim().matches("^[a-zA-z\\s,]+$")) {
                         mErrLoc.setVisibility(View.GONE);
                     } else {
@@ -235,9 +236,13 @@ public class SearchFragment extends Fragment {
                 } else {
                     bundle.putString("otherLoc", "here");
                 }
-
-                bundle.putDouble("lat", latitude);
-                bundle.putDouble("lng", longitude);
+                if(latitude != 0 && longitude != 0){
+                    bundle.putDouble("lat", latitude);
+                    bundle.putDouble("lng", longitude);
+                } else{
+                    bundle.putDouble("lat", 34.0266);
+                    bundle.putDouble("lng", -118.283);
+                }
                 bundle.putInt("getId", getId);
                 bundle.putString("keyword", keyword);
                 bundle.putString("distance", distance);
