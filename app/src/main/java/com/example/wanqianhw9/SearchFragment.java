@@ -302,28 +302,23 @@ public class SearchFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        mKeywordEditText.getText().clear();
+        mDistanceEditText.getText().clear();
+        mSearchPlace.getText().clear();
+        mErrKeyword.setVisibility(View.GONE);
+        mErrLoc.setVisibility(View.GONE);
+        spinner.setSelection(0);
+        radioGroup.check(R.id.radio_here);
+        mSearchPlace.setEnabled(false);
+        //mSearchPlace.setInputType(InputType.TYPE_NULL);
+//                mSearchPlace.setFocusable(false);
+//                mKeywordEditText.setFocusable(true);
+        mSearchPlace.clearFocus();
+    }
+
 }
 
 
-//                mKeywordEditText.addTextChangedListener(new TextWatcher() {
-//                    @Override
-//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//                    }
-//
-//                    @Override
-//                    public void afterTextChanged(Editable s) {
-//                        String str = mKeywordEditText.getText().toString();
-//                        if(str.matches("^[a-zA-z]+$")){
-//                            mErrKeyword.setVisibility(View.GONE);
-//                        } else{
-//                            mErrKeyword.setVisibility(View.VISIBLE);
-//                        }
-//
-//                    }
-//                });
